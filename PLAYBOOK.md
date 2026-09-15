@@ -1,4 +1,4 @@
-# Mnemosyne -- Setup & Test Playbook
+# ContextRRF -- Setup & Test Playbook
 
 ## Prerequisites
 
@@ -9,51 +9,51 @@ That's it. No API keys, no Docker.
 
 ---
 
-## Step 1: Install Mnemosyne
+## Step 1: Install ContextRRF
 
 ### Option A: Editable install (recommended)
 
 ```bash
-cd /path/to/mnemosyne
+cd /path/to/contextrrf
 pip install -e .
 ```
 
 ### Option B: Copy the package into your project
 
 ```bash
-cp -r /path/to/mnemosyne /your/project/mnemosyne
+cp -r /path/to/contextrrf /your/project/contextrrf
 
 # Or just set PYTHONPATH to wherever it lives
-export PYTHONPATH="/path/to/parent/of/mnemosyne:$PYTHONPATH"
+export PYTHONPATH="/path/to/parent/of/contextrrf:$PYTHONPATH"
 ```
 
 Verify it's accessible:
 ```bash
-python3 -c "import mnemosyne; print(mnemosyne.__version__)"
+python3 -c "import contextrrf; print(contextrrf.__version__)"
 # Expected: 1.0.4
 ```
 
 ---
 
-## Step 2: Initialize Mnemosyne in Your Target Project
+## Step 2: Initialize ContextRRF in Your Target Project
 
 ```bash
 cd /your/project
-python3 -m mnemosyne init
+python3 -m contextrrf init
 ```
 
 **What happens:**
-- Creates `.mnemosyne/` directory
+- Creates `.contextrrf/` directory
 - Writes `config.toml` with sensible defaults
-- Creates empty `mnemosyne.db` (SQLite with WAL mode)
+- Creates empty `contextrrf.db` (SQLite with WAL mode)
 
 **Expected output:**
 ```
-Created: /your/project/.mnemosyne/config.toml
-Created: /your/project/.mnemosyne/mnemosyne.db
+Created: /your/project/.contextrrf/config.toml
+Created: /your/project/.contextrrf/contextrrf.db
 
-Mnemosyne initialised at: /your/project
-Run 'mnemosyne ingest' to index your project.
+ContextRRF initialised at: /your/project
+Run 'contextrrf ingest' to index your project.
 ```
 
 ---
@@ -61,7 +61,7 @@ Run 'mnemosyne ingest' to index your project.
 ## Step 3: Review and Tune Configuration (Optional)
 
 ```bash
-cat .mnemosyne/config.toml
+cat .contextrrf/config.toml
 ```
 
 Key settings to consider adjusting:
@@ -69,7 +69,7 @@ Key settings to consider adjusting:
 ```toml
 [general]
 # Add patterns to ignore (node_modules, .git already ignored by default)
-ignore_patterns = [".git", "node_modules", "__pycache__", ".mnemosyne", "*.pyc", "*.lock"]
+ignore_patterns = [".git", "node_modules", "__pycache__", ".contextrrf", "*.pyc", "*.lock"]
 
 # Max file size to index (skip large generated files)
 max_file_size_kb = 512
@@ -95,7 +95,7 @@ target_ratio = 0.4
 ## Step 4: Ingest Your Codebase
 
 ```bash
-python3 -m mnemosyne ingest
+python3 -m contextrrf ingest
 ```
 
 **What happens:**
@@ -121,17 +121,17 @@ Elapsed:        1.12s
 
 **To index specific files only:**
 ```bash
-python3 -m mnemosyne ingest src/auth.py src/models.py
+python3 -m contextrrf ingest src/auth.py src/models.py
 ```
 
 **To force full re-index (ignore cache):**
 ```bash
-python3 -m mnemosyne ingest --full
+python3 -m contextrrf ingest --full
 ```
 
 **To preview what would be indexed without writing:**
 ```bash
-python3 -m mnemosyne ingest --dry-run
+python3 -m contextrrf ingest --dry-run
 ```
 
 ---
@@ -140,19 +140,19 @@ python3 -m mnemosyne ingest --dry-run
 
 ### Basic query
 ```bash
-python3 -m mnemosyne query "how does authentication work"
+python3 -m contextrrf query "how does authentication work"
 ```
 
 Returns the most relevant chunks within the default 8,000 token budget, formatted as readable text with file paths, line numbers, and relevance scores.
 
 ### With a custom token budget
 ```bash
-python3 -m mnemosyne query "database connection pooling" --budget 4000
+python3 -m contextrrf query "database connection pooling" --budget 4000
 ```
 
 ### JSON output (for programmatic use)
 ```bash
-python3 -m mnemosyne query "error handling patterns" --format json
+python3 -m contextrrf query "error handling patterns" --format json
 ```
 
 Returns structured JSON with chunk IDs, scores, file paths, line ranges, and content -- ready for an LLM agent to parse and inject.
@@ -160,26 +160,26 @@ Returns structured JSON with chunk IDs, scores, file paths, line ranges, and con
 ### With session tracking (enables delta-aware context)
 ```bash
 export SESSION_ID="my-task-001"
-python3 -m mnemosyne query "user model" --session $SESSION_ID
+python3 -m contextrrf query "user model" --session $SESSION_ID
 # ... do some work, modify files, re-ingest ...
-python3 -m mnemosyne ingest
-python3 -m mnemosyne query "user model" --session $SESSION_ID
+python3 -m contextrrf ingest
+python3 -m contextrrf query "user model" --session $SESSION_ID
 # Second query will send diffs instead of full content for unchanged chunks
 ```
 
 ### Without compression (raw chunks)
 ```bash
-python3 -m mnemosyne query "caching layer" --no-compress
+python3 -m contextrrf query "caching layer" --no-compress
 ```
 
 ---
 
 ## Step 6: Test Compression
 
-Preview how Mnemosyne compresses a specific file:
+Preview how ContextRRF compresses a specific file:
 
 ```bash
-python3 -m mnemosyne compress src/engine.py
+python3 -m contextrrf compress src/engine.py
 ```
 
 **Expected output:**
@@ -204,7 +204,7 @@ class Engine:
 
 **With custom compression ratio:**
 ```bash
-python3 -m mnemosyne compress src/engine.py --ratio 0.3
+python3 -m contextrrf compress src/engine.py --ratio 0.3
 ```
 
 ---
@@ -212,7 +212,7 @@ python3 -m mnemosyne compress src/engine.py --ratio 0.3
 ## Step 7: Check Statistics
 
 ```bash
-python3 -m mnemosyne stats
+python3 -m contextrrf stats
 ```
 
 **Expected output:**
@@ -231,7 +231,7 @@ Usage events:   57
 After modifying files, see what changed before re-indexing:
 
 ```bash
-python3 -m mnemosyne delta
+python3 -m contextrrf delta
 ```
 
 **Expected output:**
@@ -248,7 +248,7 @@ Added (1):
 
 Then re-ingest to update the index:
 ```bash
-python3 -m mnemosyne ingest
+python3 -m contextrrf ingest
 ```
 
 Only changed files are re-processed (Bloom filter + hash check skips unchanged files).
@@ -258,7 +258,7 @@ Only changed files are re-processed (Bloom filter + hash check skips unchanged f
 ## Step 9: View Audit Log
 
 ```bash
-python3 -m mnemosyne audit --last 10
+python3 -m contextrrf audit --last 10
 ```
 
 Shows the last 10 operations with timestamps, files processed, chunks added, and query metrics.
@@ -270,12 +270,12 @@ Shows the last 10 operations with timestamps, files processed, chunks added, and
 Remove orphaned data from deleted files:
 
 ```bash
-python3 -m mnemosyne gc
+python3 -m contextrrf gc
 ```
 
 Preview first:
 ```bash
-python3 -m mnemosyne gc --dry-run
+python3 -m contextrrf gc --dry-run
 ```
 
 ---
@@ -288,13 +288,13 @@ deployments.
 
 ```bash
 # Start the daemon (background process)
-python3 -m mnemosyne daemon start
+python3 -m contextrrf daemon start
 
 # Check status
-python3 -m mnemosyne daemon status
+python3 -m contextrrf daemon status
 
 # Stop when done
-python3 -m mnemosyne daemon stop
+python3 -m contextrrf daemon stop
 ```
 
 When the daemon is running, all CLI commands (`query`, `ingest`, etc.)
@@ -308,7 +308,7 @@ query latency drops from ~200ms to <20ms on warm indexes.
 Track feedback precision and retrieval quality over time:
 
 ```bash
-python3 -m mnemosyne analytics
+python3 -m contextrrf analytics
 ```
 
 Shows feedback counts, precision metrics, and trending retrieval patterns.
@@ -319,10 +319,10 @@ retrieval weights.
 
 ## Step 13: Health Check
 
-Verify the Mnemosyne installation and index integrity:
+Verify the ContextRRF installation and index integrity:
 
 ```bash
-python3 -m mnemosyne health
+python3 -m contextrrf health
 ```
 
 Reports database status, index freshness, daemon connectivity, and any
@@ -338,60 +338,60 @@ Run this end-to-end validation in any project:
 #!/bin/bash
 set -e
 
-echo "=== Mnemosyne Integration Test ==="
+echo "=== ContextRRF Integration Test ==="
 
 # Clean slate
-rm -rf .mnemosyne
+rm -rf .contextrrf
 
 # Init
-python3 -m mnemosyne init
+python3 -m contextrrf init
 echo "PASS: init"
 
 # Ingest
-python3 -m mnemosyne ingest
+python3 -m contextrrf ingest
 echo "PASS: ingest"
 
 # Stats
-python3 -m mnemosyne stats
+python3 -m contextrrf stats
 echo "PASS: stats"
 
 # Query (plain text)
-python3 -m mnemosyne query "main entry point" --budget 2000
+python3 -m contextrrf query "main entry point" --budget 2000
 echo "PASS: query (plain)"
 
 # Query (JSON)
-python3 -m mnemosyne query "configuration" --format json --budget 1000 > /dev/null
+python3 -m contextrrf query "configuration" --format json --budget 1000 > /dev/null
 echo "PASS: query (json)"
 
 # Compress (pick first .py file found)
-FIRST_PY=$(find . -name "*.py" -not -path "./.mnemosyne/*" | head -1)
+FIRST_PY=$(find . -name "*.py" -not -path "./.contextrrf/*" | head -1)
 if [ -n "$FIRST_PY" ]; then
-    python3 -m mnemosyne compress "$FIRST_PY"
+    python3 -m contextrrf compress "$FIRST_PY"
     echo "PASS: compress"
 fi
 
 # Delta
-python3 -m mnemosyne delta
+python3 -m contextrrf delta
 echo "PASS: delta"
 
 # Re-ingest (should skip all -- nothing changed)
-python3 -m mnemosyne ingest
+python3 -m contextrrf ingest
 echo "PASS: re-ingest (incremental)"
 
 # Audit
-python3 -m mnemosyne audit --last 5
+python3 -m contextrrf audit --last 5
 echo "PASS: audit"
 
 # GC dry run
-python3 -m mnemosyne gc --dry-run
+python3 -m contextrrf gc --dry-run
 echo "PASS: gc"
 
 # Health check
-python3 -m mnemosyne health
+python3 -m contextrrf health
 echo "PASS: health"
 
 # Analytics
-python3 -m mnemosyne analytics
+python3 -m contextrrf analytics
 echo "PASS: analytics"
 
 echo ""
@@ -404,10 +404,10 @@ echo "=== ALL TESTS PASSED ==="
 
 | Problem | Fix |
 |---|---|
-| `ModuleNotFoundError: mnemosyne` | Set `PYTHONPATH` to the parent directory of the `mnemosyne/` package |
-| `0 chunks, 0 tokens` on query | Run `mnemosyne ingest` first -- the index is empty |
-| All files skipped on ingest | Run `mnemosyne ingest --full` to force re-index |
-| File type not indexed | Add the extension to `supported_extensions` in `.mnemosyne/config.toml` |
+| `ModuleNotFoundError: contextrrf` | Set `PYTHONPATH` to the parent directory of the `contextrrf/` package |
+| `0 chunks, 0 tokens` on query | Run `contextrrf ingest` first -- the index is empty |
+| All files skipped on ingest | Run `contextrrf ingest --full` to force re-index |
+| File type not indexed | Add the extension to `supported_extensions` in `.contextrrf/config.toml` |
 | Large files skipped | Increase `max_file_size_kb` in config (default: 512 KB) |
 | Query returns too few results | Lower the `--budget` or adjust `retrieval.max_results` in config |
-| `python3 -m mnemosyne` not found | Ensure you're in the right directory or `PYTHONPATH` is set |
+| `python3 -m contextrrf` not found | Ensure you're in the right directory or `PYTHONPATH` is set |

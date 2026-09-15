@@ -1,19 +1,19 @@
-# mnemosyne-mcp
+# contextrrf-mcp
 
-MCP server for [Mnemosyne](https://github.com/castnettech/mnemosyne) -- a 6-signal hybrid retrieval engine for code, documents, and database schemas. Reduces LLM context waste by 73%.
+MCP server for [ContextRRF](https://github.com/castnettech/contextrrf) -- a 6-signal hybrid retrieval engine for code, documents, and database schemas. Reduces LLM context waste by 73%.
 
 For the full reference, see [MCP.md](../MCP.md) in the repository root.
 
 ## Install
 
 ```bash
-pip install mnemosyne-mcp
+pip install contextrrf-mcp
 ```
 
 ## Register with Claude Code
 
 ```bash
-claude mcp add mnemosyne -- mnemosyne-mcp
+claude mcp add contextrrf -- contextrrf-mcp
 ```
 
 Or add to your project's `.mcp.json`:
@@ -21,8 +21,8 @@ Or add to your project's `.mcp.json`:
 ```json
 {
   "mcpServers": {
-    "mnemosyne": {
-      "command": "mnemosyne-mcp",
+    "contextrrf": {
+      "command": "contextrrf-mcp",
       "args": []
     }
   }
@@ -82,7 +82,7 @@ Report indexed schema sources and statistics.
 
 ## How it works
 
-Mnemosyne indexes your codebase and documents into local SQLite, scoring every chunk with retrieval signals fused through Reciprocal Rank Fusion. Code gets 6-signal hybrid search; documents get BM25 + TF-IDF with isolated vocabulary. AST-aware compression strips boilerplate while preserving function signatures, control flow, and documentation.
+ContextRRF indexes your codebase and documents into local SQLite, scoring every chunk with retrieval signals fused through Reciprocal Rank Fusion. Code gets 6-signal hybrid search; documents get BM25 + TF-IDF with isolated vocabulary. AST-aware compression strips boilerplate while preserving function signatures, control flow, and documentation.
 
 Zero runtime dependencies beyond Python 3.11+. No API keys. No cloud services. Everything runs locally.
 

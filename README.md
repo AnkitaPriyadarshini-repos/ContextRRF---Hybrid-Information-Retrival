@@ -49,7 +49,7 @@ cd ContextRRF---Hybrid-Information-Retrival
 
 ### 2. Start ContextRRF Server & Web Dashboard
 ```bash
-python -m mnemosyne.server 8080
+python -m contextrrf.server 8080
 ```
 Open your browser and navigate to:
 ```
@@ -103,7 +103,7 @@ ContextRRF/
 │   ├── tfidf_explained.md # Sublinear TF-IDF vector space model
 │   ├── experiments.md    # Controlled experiments A-D results
 │   └── seminar_notes.md  # Presentation overview & 20 Viva Voce Q&A
-├── mnemosyne/             # Core Python Engine
+├── contextrrf/             # Core Python Engine
 │   ├── server.py          # HTTP API & Static Web Server
 │   ├── ranking.py         # RRF Fusion & Explanation Engine
 │   ├── retrieval.py       # Multi-Channel Retrieval Engine
@@ -119,6 +119,6 @@ ContextRRF/
 
 ## Baseline & License Attribution
 
-This project is derived from and builds upon the open-source baseline repository **Mnemosyne** (originally copyright Cast Rock Innovation L.L.C. under the AGPL-3.0-or-later license).
+This project is derived from and builds upon the open-source baseline repository **ContextRRF** (originally copyright Cast Rock Innovation L.L.C. under the AGPL-3.0-or-later license).
 
 All baseline modifications, RRF explainability engines, HTTP API servers, research web dashboards, academic documentation suites, and benchmark frameworks are developed under **ContextRRF**.

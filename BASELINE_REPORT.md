@@ -1,14 +1,14 @@
-# Mnemosyne Baseline Report
+# ContextRRF Baseline Report
 
 ## Repository
-- **Upstream URL**: [https://github.com/castnettech/mnemosyne](https://github.com/castnettech/mnemosyne)
-- **Git Branch**: `baseline/mnemosyne-original`
+- **Upstream URL**: [https://github.com/castnettech/contextrrf](https://github.com/castnettech/contextrrf)
+- **Git Branch**: `baseline/contextrrf-original`
 - **Target Evolution**: `ContextRRF`
 
 ---
 
 ## Objective
-Establish a clean, local working baseline of the open-source Mnemosyne repository without altering core algorithmic behavior, adding personal memory/chatbots/person detection, or redesigning the architecture. Verify indexing, search retrieval, Reciprocal Rank Fusion (RRF), token budget selection, and test suite execution.
+Establish a clean, local working baseline of the open-source ContextRRF repository without altering core algorithmic behavior, adding personal memory/chatbots/person detection, or redesigning the architecture. Verify indexing, search retrieval, Reciprocal Rank Fusion (RRF), token budget selection, and test suite execution.
 
 ---
 
@@ -21,15 +21,15 @@ Establish a clean, local working baseline of the open-source Mnemosyne repositor
 ---
 
 ## Installation
-- Successfully installed package `mnemosyne-engine` (v1.1.0) in editable mode.
+- Successfully installed package `contextrrf-engine` (v1.1.0) in editable mode.
 - Installed development dependencies (`pytest==8.3.4`, `pytest-asyncio==0.25.2`).
 - Installed zero runtime third-party dependencies by default (stdlib only).
 
 ---
 
 ## Architecture
-Mnemosyne is a zero-dependency, sub-100ms LLM context compression and code/document retrieval engine.
-- **Storage**: Local SQLite database (`.mnemosyne/mnemosyne.db`) with FTS5 virtual table for full-text BM25 scoring.
+ContextRRF is a zero-dependency, sub-100ms LLM context compression and code/document retrieval engine.
+- **Storage**: Local SQLite database (`.contextrrf/contextrrf.db`) with FTS5 virtual table for full-text BM25 scoring.
 - **Chunking**: Language-aware AST/regex code chunkers (Python, JS/TS, Go, Rust, Java, C#, SQL/DDL) and document splitters (Markdown, PDF, CSV, DOCX).
 - **Retrieval Pipeline**: Hybrid retrieval merging BM25, TF-IDF, Symbol Matching, and optional Dense Vector embeddings via Reciprocal Rank Fusion (RRF).
 
@@ -38,7 +38,7 @@ Mnemosyne is a zero-dependency, sub-100ms LLM context compression and code/docum
 ## Indexing Pipeline
 1. Traverses project directory while honoring `.gitignore` and file size limits (`ingest.py`).
 2. Computes BLAKE3/SHA-256 hashes to track file deltas (`delta.py`).
-3. Passes files to language chunkers (`mnemosyne/chunkers/`).
+3. Passes files to language chunkers (`contextrrf/chunkers/`).
 4. Extracts function/class symbol names (`symbols` table).
 5. Writes chunks to SQLite database and populates SQLite FTS5 index (`store.py`).
 
@@ -63,13 +63,13 @@ Query -> BM25 + TF-IDF + Symbol Matching + Dense (Optional)
 ---
 
 ## TF-IDF
-- In-memory TF-IDF vector space model (`mnemosyne/embeddings/tfidf_backend.py`).
+- In-memory TF-IDF vector space model (`contextrrf/embeddings/tfidf_backend.py`).
 - Uses sub-linear term frequency scaling ($1 + \ln(\text{tf})$) and inverse document frequency ($\ln(1 + N/df)$) with cosine similarity.
 
 ---
 
 ## RRF (Reciprocal Rank Fusion)
-Implemented in [`mnemosyne/ranking.py`](file:///c:/Users/ankit/ContextRRF/mnemosyne/ranking.py):
+Implemented in [`contextrrf/ranking.py`](file:///c:/Users/ankit/ContextRRF/contextrrf/ranking.py):
 
 $$RRF(d) = \sum_{s \in S} \frac{w_s}{k + \text{rank}_s(d)}$$
 
@@ -94,25 +94,25 @@ $$RRF(d) = \sum_{s \in S} \frac{w_s}{k + \text{rank}_s(d)}$$
 ---
 
 ## Compression
-- AST/line-based compression (`mnemosyne/compress.py`).
+- AST/line-based compression (`contextrrf/compress.py`).
 - Condenses imports, removes docstrings/comments, and thins non-essential lines while preserving function signatures and symbols.
 
 ---
 
 ## Cache
-- Adaptive Replacement Cache (ARC) / LRU query cache (`mnemosyne/cache.py`).
+- Adaptive Replacement Cache (ARC) / LRU query cache (`contextrrf/cache.py`).
 - Provides sub-millisecond retrieval responses for repeat or overlapping queries.
 
 ---
 
 ## Bloom Filter
-- In-memory probabilistic Bloom filter (`mnemosyne/bloom.py`).
+- In-memory probabilistic Bloom filter (`contextrrf/bloom.py`).
 - Enables instant filtering of non-existent query terms before hitting SQLite.
 
 ---
 
 ## CLI
-- Executable via `mnemosyne` or `python -m mnemosyne`.
+- Executable via `contextrrf` or `python -m contextrrf`.
 - Subcommands verified: `init`, `ingest`, `query`, `stats`, `compress`, `cache`, `delta`, `audit`, `analytics`, `gc`, `health`.
 
 ---
@@ -146,6 +146,6 @@ Tested against synthetic `demo_project/` (6 files: `auth.py`, `database.py`, `us
 ---
 
 ## Compatibility Fixes Made
-1. **`mnemosyne/store.py`**: Added safe fallback for `fcntl` import and `fcntl.flock` on Windows platforms.
-2. **`mnemosyne/tests/test_daemon.py`**: Added `@unittest.skipUnless(hasattr(socket, "AF_UNIX"), ...)` to prevent socket failures on Windows.
-3. **`mnemosyne/tests/test_ingest_paths.py`**: Added graceful skip for Windows privilege restrictions on symlink creation.
+1. **`contextrrf/store.py`**: Added safe fallback for `fcntl` import and `fcntl.flock` on Windows platforms.
+2. **`contextrrf/tests/test_daemon.py`**: Added `@unittest.skipUnless(hasattr(socket, "AF_UNIX"), ...)` to prevent socket failures on Windows.
+3. **`contextrrf/tests/test_ingest_paths.py`**: Added graceful skip for Windows privilege restrictions on symlink creation.

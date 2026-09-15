@@ -72,8 +72,8 @@ ContextRRF directly optimizes the **Retrieved Code Chunks** stage by:
 ### Q12: How does ContextRRF ensure explainability?
 **Answer**: Every query result includes an `explanation_formula` string and a per-channel breakdown detailing ranks, raw scores, weight allocations, and fractional contributions (e.g., `0.40 / (60 + 1) = 0.006557`).
 
-### Q13: What is the relationship between Mnemosyne and ContextRRF?
-**Answer**: Mnemosyne served as the baseline repository reference. ContextRRF evolved from this baseline by introducing formal RRF mathematical specs, multi-channel side-by-side comparison interfaces, an interactive RRF playground, empirical benchmark suites, and complete explainability JSON contracts.
+### Q13: What is the relationship between ContextRRF and ContextRRF?
+**Answer**: ContextRRF served as the baseline repository reference. ContextRRF evolved from this baseline by introducing formal RRF mathematical specs, multi-channel side-by-side comparison interfaces, an interactive RRF playground, empirical benchmark suites, and complete explainability JSON contracts.
 
 ### Q14: How are file dependencies handled in retrieval?
 **Answer**: ContextRRF uses an import graph booster that scans ES6/CommonJS imports, Python import statements, and module references to inject up to 2 dependent files into candidate lists without displacing top keyword matches.
