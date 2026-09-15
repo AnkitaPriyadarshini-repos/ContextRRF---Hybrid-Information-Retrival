@@ -1,12 +1,10 @@
 # -- ContextRRF data (user-specific runtime, never committed) --
 .contextrrf/
-.mnemosyne/
 bloom.bin
 *.db
 *.db-wal
 *.db-shm
 contextrrf.lock
-mnemosyne.lock
 
 # -- Python --
 __pycache__/
@@ -55,4 +53,4 @@ CLAUDE.md
 # docs/ directory tracked for ContextRRF Academic Documentation Suite
 
 # -- Holdback test data (never committed -- validation-only) --
-mnemosyne/tests/benchmark_questions/httpx_holdback.json
+contextrrf/tests/benchmark_questions/httpx_holdback.json

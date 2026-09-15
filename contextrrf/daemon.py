@@ -354,6 +354,3 @@ def is_daemon_alive(project_root: str) -> bool:
     except OSError:
         return False
 
-
-# Alias for backward compatibility
-MnemosyneDaemon = ContextRRFDaemon

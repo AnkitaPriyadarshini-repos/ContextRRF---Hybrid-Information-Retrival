@@ -653,8 +653,8 @@ def discover_projects(
             root = root_raw
         else:
             # Relative to the contextrrf package directory
-            mnemosyne_pkg_dir = os.path.abspath(os.path.join(_THIS_DIR, ".."))
-            root = os.path.abspath(os.path.join(mnemosyne_pkg_dir, root_raw))
+            contextrrf_pkg_dir = os.path.abspath(os.path.join(_THIS_DIR, ".."))
+            root = os.path.abspath(os.path.join(contextrrf_pkg_dir, root_raw))
 
         if not os.path.isdir(root):
             print(f"  WARNING: skipping {name} -- root not found: {root}")

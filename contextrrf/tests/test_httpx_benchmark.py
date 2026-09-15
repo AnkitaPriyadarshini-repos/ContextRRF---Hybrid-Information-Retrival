@@ -29,7 +29,7 @@ from contextrrf.tests.benchmark_suite import BenchmarkSuite
 
 HTTPX_TAG = "0.28.1"
 HTTPX_CACHE_DIR = os.path.join(
-    tempfile.gettempdir(), f"mnemosyne_benchmark_httpx_{HTTPX_TAG}"
+    tempfile.gettempdir(), f"contextrrf_benchmark_httpx_{HTTPX_TAG}"
 )
 
 

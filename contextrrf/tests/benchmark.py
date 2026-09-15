@@ -39,7 +39,7 @@ def get_sample_questions() -> list[dict]:
 
     When using the single-project benchmark, supply questions via the
     ``--questions`` JSON flag or pass them programmatically to
-    :class:`MnemosyneBenchmark`.  Each question dict should have keys:
+    :class:`ContextRRFBenchmark`.  Each question dict should have keys:
     ``id``, ``question``, ``challenge``, ``ground_truth``.
 
     Returns:
@@ -184,7 +184,7 @@ class ContextRRFBenchmark:
                     "question": q["question"],
                     "challenge": q["challenge"],
                     "raw_tokens": raw_tokens,
-                    "mnemosyne_tokens": mn_tokens,
+                    "contextrrf_tokens": mn_tokens,
                     "reduction_pct": reduction,
                 }
             )
@@ -332,7 +332,7 @@ class ContextRRFBenchmark:
 
         return {
             "raw_bytes": raw_size,
-            "mnemosyne_bytes": db_size,
+            "contextrrf_bytes": db_size,
             "overhead_ratio": db_size / max(1, raw_size),
         }
 
@@ -393,19 +393,19 @@ class ContextRRFBenchmark:
         lines.append(f"  {'-'*5}  {'-'*20}  {'-'*7}  {'-'*7}  {'-'*10}")
 
         total_raw = 0
-        total_mn = 0
+        total_crrf = 0
         for r in results["token_reduction"]:
             total_raw += r["raw_tokens"]
-            total_mn += r["mnemosyne_tokens"]
+            total_crrf += r["contextrrf_tokens"]
             lines.append(
                 f"  {r['id']:<5}  {r['challenge']:<20}  {r['raw_tokens']:>7,}"
-                f"  {r['mnemosyne_tokens']:>7,}  {r['reduction_pct']:>9.1f}%"
+                f"  {r['contextrrf_tokens']:>7,}  {r['reduction_pct']:>9.1f}%"
             )
 
-        overall_reduction = (1 - total_mn / max(1, total_raw)) * 100
+        overall_reduction = (1 - total_crrf / max(1, total_raw)) * 100
         lines.append(f"  {'-'*5}  {'-'*20}  {'-'*7}  {'-'*7}  {'-'*10}")
         lines.append(
-            f"  {'TOTAL':<5}  {'':<20}  {total_raw:>7,}  {total_mn:>7,}  {overall_reduction:>9.1f}%"
+            f"  {'TOTAL':<5}  {'':<20}  {total_raw:>7,}  {total_crrf:>7,}  {overall_reduction:>9.1f}%"
         )
 
         # ------------------------------------------------------------------
@@ -500,9 +500,9 @@ class ContextRRFBenchmark:
         lines.append("STORAGE")
         lines.append("-" * 72)
         raw_kb = storage["raw_bytes"] / 1024
-        db_kb = storage["mnemosyne_bytes"] / 1024
+        db_kb = storage["contextrrf_bytes"] / 1024
         lines.append(f"  Raw source files  : {raw_kb:>9.1f} KB  ({storage['raw_bytes']:,} bytes)")
-        lines.append(f"  .contextrrf/ total : {db_kb:>9.1f} KB  ({storage['mnemosyne_bytes']:,} bytes)")
+        lines.append(f"  .contextrrf/ total : {db_kb:>9.1f} KB  ({storage['contextrrf_bytes']:,} bytes)")
         lines.append(f"  Overhead ratio    : {storage['overhead_ratio']:.2f}x")
 
         lines.append("")
@@ -585,10 +585,6 @@ def main() -> None:
 
     report = bench.format_report(results)
     print(report)
-
-
-# Alias for backward compatibility
-MnemosyneBenchmark = ContextRRFBenchmark
 
 
 if __name__ == "__main__":

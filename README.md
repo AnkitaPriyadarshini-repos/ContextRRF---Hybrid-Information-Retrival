@@ -194,13 +194,9 @@ contextrrf stats                                   # index and ARC cache statist
 
 ## 9. Baseline & Academic Legal Attribution
 
-<p align="center">
-  <img src="docs/assets/mnemosyne.png" alt="Baseline Mnemosyne Engine Visual" width="350"><br>
-  <i>Baseline Reference: Mnemosyne Open-Source Engine Core</i>
-</p>
+ContextRRF is an academic research and software engineering project derived from an open-source baseline engine repository (originally copyright Cast Rock Innovation L.L.C. under the AGPL-3.0-or-later license).
 
-ContextRRF is an academic research and software engineering project derived from an open-source **Mnemosyne** baseline repository (originally copyright Cast Rock Innovation L.L.C. under the AGPL-3.0-or-later license).
-
-The ContextRRF implementation extends and reorganizes the baseline around Reciprocal Rank Fusion, retrieval explainability, token-budget optimization, experimental evaluation, an interactive research dashboard, and a zero-dependency HTTP server.
+The ContextRRF implementation extends and reorganizes the architecture around Reciprocal Rank Fusion, retrieval explainability, token-budget optimization, experimental evaluation, an interactive research dashboard, and a zero-dependency HTTP server.
 
 All legal notices, AGPL-3.0 license terms, and copyright attributions are preserved in [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE).
+
