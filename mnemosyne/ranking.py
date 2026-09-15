@@ -18,9 +18,16 @@ if TYPE_CHECKING:
     from mnemosyne.models import QueryResult
 
 
+DEFAULT_RRF_WEIGHTS: dict[str, float] = {
+    "bm25": 0.4,
+    "tfidf": 0.4,
+    "usage": 0.2,
+}
+
+
 def rrf_fuse(
     score_lists: dict[str, list[tuple[int, float]]],
-    weights: dict[str, float],
+    weights: dict[str, float] | None = None,
     k: int = 60,
 ) -> list[tuple[int, float, dict]]:
     """
@@ -35,14 +42,18 @@ def rrf_fuse(
     Args:
         score_lists: Mapping of source name -> list of ``(chunk_id, score)``
                      pairs (any order; will be sorted internally).
-        weights:     Per-source weighting factors.  Missing sources default
-                     to weight 1.0.
+        weights:     Per-source weighting factors.  Defaults to BM25=0.4,
+                     TFIDF=0.4, Usage=0.2 if None.
         k:           RRF smoothing constant (default 60).
 
     Returns:
         List of ``(chunk_id, rrf_score, source_scores_dict)`` tuples sorted
         by ``rrf_score`` descending.
     """
+    effective_weights = DEFAULT_RRF_WEIGHTS.copy()
+    if weights is not None:
+        effective_weights.update(weights)
+
     # Build rank maps for each source
     rank_maps: dict[str, dict[int, int]] = {}
     list_lengths: dict[str, int] = {}
@@ -64,16 +75,33 @@ def rrf_fuse(
         raw_scores[source] = {chunk_id: score for chunk_id, score in pairs}
 
     results: list[tuple[int, float, dict]] = []
-    for chunk_id in all_ids:
+    for chunk_id in sorted(all_ids):
         rrf_score = 0.0
-        source_scores: dict[str, float] = {}
+        source_scores: dict[str, Any] = {}
+        details: dict[str, dict[str, Any]] = {}
+        formula_parts: list[str] = []
+
         for source in score_lists:
-            w = weights.get(source, 1.0)
+            w = effective_weights.get(source, 1.0)
             rank = rank_maps[source].get(chunk_id, list_lengths[source] + 1)
             contribution = w / (k + rank)
             rrf_score += contribution
-            source_scores[source] = raw_scores[source].get(chunk_id, 0.0)
+            raw_val = raw_scores[source].get(chunk_id, 0.0)
+
+            source_scores[source] = raw_val
+            details[source] = {
+                "rank": rank,
+                "score": raw_val,
+                "contribution": contribution,
+                "weight": w,
+            }
+            formula_parts.append(f"{w:.2f}/({k}+{rank})")
+
         source_scores["rrf"] = rrf_score
+        source_scores["details"] = details
+        source_scores["explanation_formula"] = (
+            f"RRF({chunk_id}) = " + " + ".join(formula_parts) + f" = {rrf_score:.6f}"
+        )
         results.append((chunk_id, rrf_score, source_scores))
 
     results.sort(key=lambda x: x[1], reverse=True)
