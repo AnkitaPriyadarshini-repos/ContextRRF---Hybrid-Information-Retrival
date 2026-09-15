@@ -1,6 +1,6 @@
-# Commercial Licensing -- Mnemosyne
+# Commercial Licensing -- ContextRRF
 
-Mnemosyne is open source under the [GNU Affero General Public License v3.0 (AGPL-3.0)](LICENSE).
+ContextRRF is open source under the [GNU Affero General Public License v3.0 (AGPL-3.0)](LICENSE).
 
 ## When you DON'T need a commercial license
 
@@ -12,9 +12,9 @@ Mnemosyne is open source under the [GNU Affero General Public License v3.0 (AGPL
 
 ## When you DO need a commercial license
 
-- Embedding Mnemosyne in a proprietary (closed-source) product
-- Offering Mnemosyne as part of a paid service (SaaS, API, hosted tool)
-- Distributing Mnemosyne in a product where you cannot comply with AGPL-3.0 copyleft requirements
+- Embedding ContextRRF in a proprietary (closed-source) product
+- Offering ContextRRF as part of a paid service (SaaS, API, hosted tool)
+- Distributing ContextRRF in a product where you cannot comply with AGPL-3.0 copyleft requirements
 - Any use where you need a license grant that the AGPL does not provide
 
 ## How to get a commercial license
@@ -27,4 +27,4 @@ Commercial licenses are negotiated on a per-case basis. We aim to be fair and ac
 
 ## Contributor License Agreement (CLA)
 
-Contributors to Mnemosyne sign a lightweight CLA that grants Cast Rock Innovation L.L.C. the right to offer contributions under both the AGPL-3.0 and commercial licenses. This is necessary for the dual-license model to work. The CLA is signed once via GitHub as part of your first pull request.
+Contributors to ContextRRF sign a lightweight CLA that grants Cast Rock Innovation L.L.C. the right to offer contributions under both the AGPL-3.0 and commercial licenses. This is necessary for the dual-license model to work. The CLA is signed once via GitHub as part of your first pull request.

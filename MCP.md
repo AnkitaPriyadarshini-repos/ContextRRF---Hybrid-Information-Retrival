@@ -1,39 +1,39 @@
 # MCP Server Reference
 
-Mnemosyne ships an MCP (Model Context Protocol) server that gives Claude Code and other MCP-compatible agents native access to the 6-signal hybrid retrieval engine. Instead of grepping through files one at a time, the agent calls `mnemosyne.search` and gets ranked, compressed, budget-aware results in a single tool call.
+ContextRRF ships an MCP (Model Context Protocol) server that gives Claude Code and other MCP-compatible agents native access to the 6-signal hybrid retrieval engine. Instead of grepping through files one at a time, the agent calls `contextrrf.search` and gets ranked, compressed, budget-aware results in a single tool call.
 
 Everything runs locally. No API calls. No data leaves your machine.
 
 ## Install
 
 ```bash
-pip install mnemosyne-mcp
+pip install contextrrf-mcp
 ```
 
 This installs:
-- The `mnemosyne-mcp` console script (the MCP server binary)
+- The `contextrrf-mcp` console script (the MCP server binary)
 - The `mcp` SDK (Anthropic's stdio protocol library -- local only, no telemetry)
-- Depends on `mnemosyne-engine` (the core retrieval library -- must be installed separately or already present)
+- Depends on `contextrrf-engine` (the core retrieval library -- must be installed separately or already present)
 
 ## Register with Claude Code
 
 **Per-project** (recommended):
 ```bash
 cd /your/project
-claude mcp add mnemosyne -- mnemosyne-mcp
+claude mcp add contextrrf -- contextrrf-mcp
 ```
 
 **Per-user** (available in all projects):
 ```bash
-claude mcp add --scope user mnemosyne -- mnemosyne-mcp
+claude mcp add --scope user contextrrf -- contextrrf-mcp
 ```
 
 **Manual config** -- add to `.mcp.json` in your project root:
 ```json
 {
   "mcpServers": {
-    "mnemosyne": {
-      "command": "mnemosyne-mcp",
+    "contextrrf": {
+      "command": "contextrrf-mcp",
       "args": []
     }
   }
@@ -42,12 +42,12 @@ claude mcp add --scope user mnemosyne -- mnemosyne-mcp
 
 **With a virtualenv** -- point to the venv binary directly:
 ```bash
-claude mcp add mnemosyne -- /path/to/your/.venv/bin/mnemosyne-mcp
+claude mcp add contextrrf -- /path/to/your/.venv/bin/contextrrf-mcp
 ```
 
 ## Tools
 
-### `mnemosyne.search`
+### `contextrrf.search`
 
 Search the codebase using 6-signal hybrid retrieval.
 
@@ -70,12 +70,12 @@ Search the codebase using 6-signal hybrid retrieval.
 
 ```
 You: how does the authentication middleware work?
-Claude: [calls mnemosyne.search with query="authentication middleware"]
+Claude: [calls contextrrf.search with query="authentication middleware"]
 -> Returns 3 ranked chunks from auth.py, middleware.py, and config.py
 -> Claude answers from those chunks without reading any other files
 ```
 
-### `mnemosyne.index`
+### `contextrrf.index`
 
 Index or re-index the codebase. Incremental by default -- only processes files that changed since the last run.
 
@@ -90,12 +90,12 @@ Index or re-index the codebase. Incremental by default -- only processes files t
 2. Computes content hashes to detect changes
 3. Chunks changed files using language-specific AST parsers (Python, JS/TS, Go, C#, Rust, Java, Kotlin) or line-based chunking for other formats
 4. Builds BM25 and TF-IDF indexes in SQLite
-5. Creates a `.mnemosyne/` directory in the project root (add to `.gitignore`)
+5. Creates a `.contextrrf/` directory in the project root (add to `.gitignore`)
 
 **First run:** Indexes everything. Takes 5-30 seconds depending on codebase size.
 **Subsequent runs:** Incremental. Only re-indexes changed files. Sub-second for small changesets.
 
-### `mnemosyne.stats`
+### `contextrrf.stats`
 
 Show index statistics for the current project.
 
@@ -112,18 +112,18 @@ Claude Code (local process)
     |
     | stdio pipe (JSON-RPC over stdin/stdout)
     |
-mnemosyne-mcp server (local process)
+contextrrf-mcp server (local process)
     |
     | Python function calls (in-process)
     |
-mnemosyne-engine
+contextrrf-engine
     |
     | SQLite read/write
     |
-.mnemosyne/ (local index database)
+.contextrrf/ (local index database)
 ```
 
-The MCP server is a thin async wrapper around the `mnemosyne-engine` Python API. It uses the `mcp` SDK's stdio transport -- Claude Code spawns the server as a subprocess and communicates over stdin/stdout. No HTTP server, no ports, no network traffic.
+The MCP server is a thin async wrapper around the `contextrrf-engine` Python API. It uses the `mcp` SDK's stdio transport -- Claude Code spawns the server as a subprocess and communicates over stdin/stdout. No HTTP server, no ports, no network traffic.
 
 **Lazy initialization:** The retrieval engine is only loaded when the first tool call arrives. Subsequent calls reuse the cached engine instance.
 
@@ -133,7 +133,7 @@ The MCP server is a thin async wrapper around the `mnemosyne-engine` Python API.
 
 ## Configuration
 
-The MCP server respects the same configuration as the CLI. Edit `.mnemosyne/config.toml` in your project root:
+The MCP server respects the same configuration as the CLI. Edit `.contextrrf/config.toml` in your project root:
 
 ```toml
 [retrieval]
@@ -149,11 +149,11 @@ preserve_signatures = true
 preserve_docstrings = true
 
 [general]
-ignore_patterns = [".git", "node_modules", "__pycache__", ".mnemosyne"]
+ignore_patterns = [".git", "node_modules", "__pycache__", ".contextrrf"]
 max_file_size_kb = 512
 ```
 
-The `budget` parameter in `mnemosyne.search` overrides `token_budget` on a per-query basis.
+The `budget` parameter in `contextrrf.search` overrides `token_budget` on a per-query basis.
 
 ## Environment Variables
 
@@ -163,13 +163,13 @@ The `budget` parameter in `mnemosyne.search` overrides `token_budget` on a per-q
 
 ## Troubleshooting
 
-**"No files indexed yet"** -- Run `mnemosyne.index` first, or run `mnemosyne init && mnemosyne ingest` from the CLI.
+**"No files indexed yet"** -- Run `contextrrf.index` first, or run `contextrrf init && contextrrf ingest` from the CLI.
 
-**Server not appearing in Claude Code** -- Verify registration with `claude mcp list`. Check that the binary path is correct: `which mnemosyne-mcp` or the full venv path.
+**Server not appearing in Claude Code** -- Verify registration with `claude mcp list`. Check that the binary path is correct: `which contextrrf-mcp` or the full venv path.
 
-**Slow first query** -- Cold start loads the TF-IDF index into memory. Subsequent queries are <20ms. Use daemon mode (`mnemosyne daemon start`) for persistent warm indexes.
+**Slow first query** -- Cold start loads the TF-IDF index into memory. Subsequent queries are <20ms. Use daemon mode (`contextrrf daemon start`) for persistent warm indexes.
 
-**`.mnemosyne/` directory** -- Created in the project root on first index. Add to your `.gitignore`. Contains only the SQLite index and cache -- no source code is stored, only chunk hashes and compressed representations.
+**`.contextrrf/` directory** -- Created in the project root on first index. Add to your `.gitignore`. Contains only the SQLite index and cache -- no source code is stored, only chunk hashes and compressed representations.
 
 ## Compatibility
 
@@ -182,10 +182,10 @@ The `budget` parameter in `mnemosyne.search` overrides `token_budget` on a per-q
 
 | | |
 |---|---|
-| **PyPI** | [mnemosyne-mcp](https://pypi.org/project/mnemosyne-mcp/) |
-| **Depends on** | [mnemosyne-engine](https://pypi.org/project/mnemosyne-engine/) >= 1.0.0, [mcp](https://pypi.org/project/mcp/) >= 1.0.0 |
+| **PyPI** | [contextrrf-mcp](https://pypi.org/project/contextrrf-mcp/) |
+| **Depends on** | [contextrrf-engine](https://pypi.org/project/contextrrf-engine/) >= 1.0.0, [mcp](https://pypi.org/project/mcp/) >= 1.0.0 |
 | **License** | AGPL-3.0 (commercial license available) |
-| **Source** | [mcp/](mcp/) directory in the Mnemosyne repository |
+| **Source** | [mcp/](mcp/) directory in the ContextRRF repository |
 
 ## License
 

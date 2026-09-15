@@ -1,4 +1,4 @@
-# Mnemosyne Benchmark: Complex Domain-Specific Query
+# ContextRRF Benchmark: Complex Domain-Specific Query
 
 **Query:** "How can I improve the accuracy of the detection and classification pipeline?"
 **Target:** Production Python codebase (~844 source files, FastAPI backend, React frontend, PostgreSQL, Celery workers, multi-layer detection pipeline)
@@ -11,8 +11,8 @@
 
 Two runs answering the same domain-specific technical question:
 
-- **Run 1 (Baseline):** Standard AI agent tools — Grep, Glob, Read — with the same ignore patterns as Mnemosyne's config (excluding .venv, tests, eval, data, models, etc.)
-- **Run 2 (Mnemosyne):** Single `mnemosyne query` command against a pre-built index
+- **Run 1 (Baseline):** Standard AI agent tools — Grep, Glob, Read — with the same ignore patterns as ContextRRF's config (excluding .venv, tests, eval, data, models, etc.)
+- **Run 2 (ContextRRF):** Single `contextrrf query` command against a pre-built index
 
 This query is significantly harder than a simple "what does this project do" question. It requires finding specific detection patterns, understanding how they're classified, identifying the ML pipeline vs regex pipeline, and understanding the negation and gating architecture.
 
@@ -20,7 +20,7 @@ This query is significantly harder than a simple "what does this project do" que
 
 ## Results
 
-| Metric | Baseline (Standard Tools) | Mnemosyne | Improvement |
+| Metric | Baseline (Standard Tools) | ContextRRF | Improvement |
 |---|---|---|---|
 | **Tool calls** | 13 | 1 | **-92%** |
 | **Wall clock time** | ~72 seconds | ~1.2 seconds | **-98%** |
@@ -56,11 +56,11 @@ The standard approach required 13 sequential tool calls across 72 seconds:
 
 The agent had to: discover which files contain detection logic, navigate into the correct layer, read the file in multiple passes (too large for single read), trace the pattern definitions, understand the ML vs regex branching, and read the architecture overview separately.
 
-## Run 2: Mnemosyne Detail
+## Run 2: ContextRRF Detail
 
 One command:
 ```bash
-mnemosyne query "how can I improve the accuracy of the detection and classification pipeline?" --budget 8000
+contextrrf query "how can I improve the accuracy of the detection and classification pipeline?" --budget 8000
 ```
 
 Returned **7 ranked chunks, 4,131 tokens** from the most relevant sections — covering detection patterns, classification logic, the ML pipeline, the detection entry point, architecture documentation, technical specifications, and data models.
@@ -80,7 +80,7 @@ The first benchmark ("tell me the purpose of this project") was a broad conceptu
 - Finding the negation detection and gating logic
 - Connecting the implementation to the architecture documentation
 
-The baseline approach took 13 tool calls because it had to navigate this complexity manually. Mnemosyne's retrieval engine identified the relevant sections automatically.
+The baseline approach took 13 tool calls because it had to navigate this complexity manually. ContextRRF's retrieval engine identified the relevant sections automatically.
 
 ### Key differences from Benchmark 1
 
@@ -89,19 +89,19 @@ The baseline approach took 13 tool calls because it had to navigate this complex
 | Baseline tool calls | 6 | 13 | +117% (complexity scales linearly for baseline) |
 | Baseline time | ~27s | ~72s | +167% |
 | Baseline tokens | ~9,200 | ~18,500 | +101% |
-| Mnemosyne tool calls | 1 | 1 | +0% (constant) |
-| Mnemosyne time | ~0.2s | ~1.2s | Slight increase (more chunks) |
-| Mnemosyne tokens | 2,409 | 4,131 | +71% (proportional to answer complexity) |
+| ContextRRF tool calls | 1 | 1 | +0% (constant) |
+| ContextRRF time | ~0.2s | ~1.2s | Slight increase (more chunks) |
+| ContextRRF tokens | 2,409 | 4,131 | +71% (proportional to answer complexity) |
 | Token savings | 74% | 78% | Better on complex queries |
 | Time savings | 99% | 98% | Consistent |
 
-**The more complex the query, the more Mnemosyne saves.** Baseline tool calls and time scale linearly with query complexity. Mnemosyne stays at 1 tool call regardless.
+**The more complex the query, the more ContextRRF saves.** Baseline tool calls and time scale linearly with query complexity. ContextRRF stays at 1 tool call regardless.
 
 ### Cost projection
 
 For a 10-query complex coding session:
 - **Baseline:** ~185,000 context tokens (10 x 18,500), 13 tool calls per query
-- **Mnemosyne:** ~41,310 context tokens (10 x 4,131), 1 tool call per query
+- **ContextRRF:** ~41,310 context tokens (10 x 4,131), 1 tool call per query
 - **Savings:** ~143,690 tokens per session (~78%)
 
 ---
@@ -114,4 +114,4 @@ On a complex, domain-specific query against a large production codebase:
 - **92% fewer tool calls** (1 vs 13)
 - **Equivalent answer depth** — both approaches surfaced the detection system, ML pipeline, negation logic, and architecture
 
-The savings increase with query complexity because baseline costs scale with navigation difficulty while Mnemosyne costs scale only with answer size.
+The savings increase with query complexity because baseline costs scale with navigation difficulty while ContextRRF costs scale only with answer size.

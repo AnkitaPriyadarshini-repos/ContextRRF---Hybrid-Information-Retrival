@@ -9,19 +9,19 @@
 
 ## Threat Model
 
-Mnemosyne is a local-first tool that operates on a user's own filesystem.
+ContextRRF is a local-first tool that operates on a user's own filesystem.
 It does not make network calls, host services, or process untrusted input
 in its default configuration.
 
 ### Trust boundaries
 
-- **Filesystem access:** Mnemosyne reads and writes files within the project
-  root directory and the `.mnemosyne/` subdirectory. Path containment is
+- **Filesystem access:** ContextRRF reads and writes files within the project
+  root directory and the `.contextrrf/` subdirectory. Path containment is
   enforced via `os.path.realpath()` -- symlinks are resolved before
   validation. Paths outside the project root are rejected.
 
 - **Daemon socket:** When running in daemon mode, communication occurs over
-  a Unix domain socket at `.mnemosyne/mnemosyne.sock` with permissions set
+  a Unix domain socket at `.contextrrf/contextrrf.sock` with permissions set
   to `0600` (owner-only). The daemon validates all ingest paths against the
   project root before processing.
 
@@ -34,7 +34,7 @@ in its default configuration.
 
 ### Out of scope
 
-- Network security (Mnemosyne makes no network calls in normal operation)
+- Network security (ContextRRF makes no network calls in normal operation)
 - Authentication/authorization (single-user local tool)
 - Denial of service (local tool, user controls their own resources)
 
@@ -42,7 +42,7 @@ in its default configuration.
 
 - **TOCTOU on path validation:** A race condition exists between path
   resolution and file read. This is inherent to POSIX filesystems and not
-  exploitable in Mnemosyne's single-user context.
+  exploitable in ContextRRF's single-user context.
 
 - **FTS5 query injection:** While FTS5 special characters are escaped, the
   FTS5 query language is limited and cannot cause data modification. The

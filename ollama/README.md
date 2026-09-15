@@ -1,22 +1,22 @@
-# Mnemosyne-Ollama
+# ContextRRF-Ollama
 
 Ask your codebase questions using local LLMs. Zero config, zero cloud, zero new dependencies.
 
-Bridges [Ollama](https://ollama.com) to [Mnemosyne](https://pypi.org/project/mnemosyne-engine/) via [MCP](https://modelcontextprotocol.io) -- the same 6-signal hybrid retrieval that powers Mnemosyne's Claude Code integration, now available with any tool-calling Ollama model.
+Bridges [Ollama](https://ollama.com) to [ContextRRF](https://pypi.org/project/contextrrf-engine/) via [MCP](https://modelcontextprotocol.io) -- the same 6-signal hybrid retrieval that powers ContextRRF's Claude Code integration, now available with any tool-calling Ollama model.
 
 ## Install
 
 ```bash
-pip install mnemosyne-ollama
+pip install contextrrf-ollama
 ```
 
-This installs everything: the Ollama bridge, the MCP server, and the Mnemosyne retrieval engine.
+This installs everything: the Ollama bridge, the MCP server, and the ContextRRF retrieval engine.
 
 ## Quick Start
 
 ```bash
 cd /your/project
-mnemosyne-ollama "how does authentication work"
+contextrrf-ollama "how does authentication work"
 ```
 
 That's it. Auto-detects your Ollama model, indexes if needed, searches with ranked hybrid retrieval, and returns an answer with file paths and line numbers.
@@ -44,15 +44,15 @@ If no `--model` is specified, the first installed tool-capable model is used aut
 ### Single query
 
 ```bash
-mnemosyne-ollama "how does the rate limiter work"
-mnemosyne-ollama "find all database queries" --model qwen2.5 --budget 12000
-mnemosyne-ollama "explain the auth flow" -v   # verbose: shows tool calls
+contextrrf-ollama "how does the rate limiter work"
+contextrrf-ollama "find all database queries" --model qwen2.5 --budget 12000
+contextrrf-ollama "explain the auth flow" -v   # verbose: shows tool calls
 ```
 
 ### Interactive mode
 
 ```bash
-mnemosyne-ollama
+contextrrf-ollama
 > how does the auth middleware work?
 [searches, responds with code citations]
 > what about rate limiting?
@@ -63,7 +63,7 @@ mnemosyne-ollama
 ### Python library
 
 ```python
-from mnemosyne_ollama import run
+from contextrrf_ollama import run
 
 result = await run("how does auth work", model="qwen2.5", budget=8000)
 print(result.response)
@@ -72,7 +72,7 @@ print(result.response)
 ## CLI Reference
 
 ```
-mnemosyne-ollama [QUERY] [OPTIONS]
+contextrrf-ollama [QUERY] [OPTIONS]
 
 positional:
   query                    Question about the codebase (omit for interactive)
@@ -89,9 +89,9 @@ options:
 ## How It Works
 
 ```
-mnemosyne-ollama
+contextrrf-ollama
   |
-  | 1. Spawns mnemosyne-mcp as subprocess (stdio)
+  | 1. Spawns contextrrf-mcp as subprocess (stdio)
   | 2. Discovers tools: search, index, stats
   | 3. Sends query + tools to Ollama /api/chat
   |
@@ -99,7 +99,7 @@ Ollama (local model)
   |
   | 4. Model calls search tool with your question
   |
-mnemosyne-mcp
+contextrrf-mcp
   |
   | 5. 6-signal hybrid retrieval (BM25 + TF-IDF + symbols + usage + prefetch + RRF)
   | 6. AST-aware compression, budget-cut to token limit
@@ -112,13 +112,13 @@ Everything runs locally. No API keys, no cloud, no data leaves your machine.
 
 ## Configuration
 
-Mnemosyne search settings are configured via `.mnemosyne/config.toml` in your project root (created on first index). See the [Mnemosyne documentation](https://github.com/castnettech/mnemosyne#readme) for details.
+ContextRRF search settings are configured via `.contextrrf/config.toml` in your project root (created on first index). See the [ContextRRF documentation](https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival#readme) for details.
 
 The `--budget` flag overrides the configured default per query.
 
 ## Trademarks
 
-Ollama, Qwen, Llama, Gemma, Phi, Mistral, and Command-R are trademarks of their respective owners. mnemosyne-ollama is an independent project and is not endorsed by or affiliated with any of these companies.
+Ollama, Qwen, Llama, Gemma, Phi, Mistral, and Command-R are trademarks of their respective owners. contextrrf-ollama is an independent project and is not endorsed by or affiliated with any of these companies.
 
 ## License
 

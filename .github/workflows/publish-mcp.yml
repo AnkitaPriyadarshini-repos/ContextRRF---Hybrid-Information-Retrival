@@ -1,4 +1,4 @@
-# Publish mnemosyne-mcp to PyPI via OIDC Trusted Publisher
+# Publish contextrrf-mcp to PyPI via OIDC Trusted Publisher
 #
 # Security model:
 #   - ONLY fires on GitHub Releases with tag prefix "mcp-v" (e.g. mcp-v0.2.0)
@@ -10,8 +10,8 @@
 #   - No secrets, tokens, or passwords -- pure OIDC
 #
 # Required setup:
-#   1. PyPI: Add trusted publisher for mnemosyne-mcp
-#      (owner=castnettech, repo=mnemosyne, workflow=publish-mcp.yml, environment=release)
+#   1. PyPI: Add trusted publisher for contextrrf-mcp
+#      (owner=castnettech, repo=contextrrf, workflow=publish-mcp.yml, environment=release)
 #   2. GitHub: "release" environment already exists -- ensure it covers this workflow
 #
 # Tag convention:

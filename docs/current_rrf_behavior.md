@@ -1,12 +1,12 @@
-# Current Reciprocal Rank Fusion (RRF) Behavior in Mnemosyne
+# Current Reciprocal Rank Fusion (RRF) Behavior in ContextRRF
 
-This document details the exact Reciprocal Rank Fusion (RRF) implementation in Mnemosyne (v1.1.0 baseline), traced directly from source files [`mnemosyne/ranking.py`](file:///c:/Users/ankit/ContextRRF/mnemosyne/ranking.py) and [`mnemosyne/retrieval.py`](file:///c:/Users/ankit/ContextRRF/mnemosyne/retrieval.py).
+This document details the exact Reciprocal Rank Fusion (RRF) implementation in ContextRRF (v1.1.0 baseline), traced directly from source files [`contextrrf/ranking.py`](file:///c:/Users/ankit/ContextRRF/contextrrf/ranking.py) and [`contextrrf/retrieval.py`](file:///c:/Users/ankit/ContextRRF/contextrrf/retrieval.py).
 
 ---
 
 ## 1. Mathematical Formulation
 
-In Mnemosyne, Reciprocal Rank Fusion combines score lists from multiple retrieval channels (such as **BM25**, **TF-IDF**, **Symbol Matcher**, and **Dense Vector Search**) into a single unified score per chunk $d$.
+In ContextRRF, Reciprocal Rank Fusion combines score lists from multiple retrieval channels (such as **BM25**, **TF-IDF**, **Symbol Matcher**, and **Dense Vector Search**) into a single unified score per chunk $d$.
 
 The equation implemented in `rrf_fuse` is:
 
@@ -22,7 +22,7 @@ Where:
 
 ## 2. Source Code Implementation
 
-The fusion algorithm is defined in [`mnemosyne/ranking.py`](file:///c:/Users/ankit/ContextRRF/mnemosyne/ranking.py):
+The fusion algorithm is defined in [`contextrrf/ranking.py`](file:///c:/Users/ankit/ContextRRF/contextrrf/ranking.py):
 
 ```python
 def rrf_fuse(
@@ -92,7 +92,7 @@ Setting $k = 60$ dampens the high rank variance near top positions, preventing a
 
 ## 4. Retrieval Integration & Post-Fusion Adjustments
 
-In [`mnemosyne/retrieval.py`](file:///c:/Users/ankit/ContextRRF/mnemosyne/retrieval.py), `_rrf_fuse` gathers scores from each active backend, executes `rrf_fuse(...)`, and passes the resulting candidates to:
+In [`contextrrf/retrieval.py`](file:///c:/Users/ankit/ContextRRF/contextrrf/retrieval.py), `_rrf_fuse` gathers scores from each active backend, executes `rrf_fuse(...)`, and passes the resulting candidates to:
 1. Filename match boosting (`1.5x` multiplier for exact file/path matching).
 2. Cost-model value-density scoring (`cost_model_score`).
 3. Greedy token-budget selection (`budget_cut`).

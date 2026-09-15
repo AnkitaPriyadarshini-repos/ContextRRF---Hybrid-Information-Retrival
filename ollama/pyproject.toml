@@ -3,14 +3,14 @@ requires = ["setuptools>=68.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "mnemosyne-ollama"
+name = "contextrrf-ollama"
 version = "0.1.1"
-description = "Ask your codebase questions using Ollama and Mnemosyne -- zero-config local code search"
+description = "Ask your codebase questions using Ollama and ContextRRF -- zero-config local code search"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "AGPL-3.0-or-later"
 authors = [{name = "Cast Rock Innovation L.L.C."}]
-keywords = ["mnemosyne", "ollama", "mcp", "code-search", "local-llm", "rag", "tool-calling"]
+keywords = ["contextrrf", "ollama", "mcp", "code-search", "local-llm", "rag", "tool-calling"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -23,16 +23,16 @@ classifiers = [
 ]
 
 dependencies = [
-    "mnemosyne-mcp>=0.1.0",
+    "contextrrf-mcp>=0.1.0",
 ]
 
 [project.urls]
 Homepage = "https://castnettechnology.com"
-Repository = "https://github.com/castnettech/mnemosyne"
-Issues = "https://github.com/castnettech/mnemosyne/issues"
+Repository = "https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival"
+Issues = "https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival/issues"
 
 [project.scripts]
-mnemosyne-ollama = "mnemosyne_ollama.cli:main"
+contextrrf-ollama = "contextrrf_ollama.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

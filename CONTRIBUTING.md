@@ -1,14 +1,14 @@
-# Contributing to Mnemosyne
+# Contributing to ContextRRF
 
 Thank you for your interest in contributing.
 
 ## Setup
 
 ```bash
-git clone https://github.com/castnettech/mnemosyne.git
-cd mnemosyne
+git clone https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival.git
+cd contextrrf
 pip install -e ".[dev]"
-pytest mnemosyne/tests/
+pytest contextrrf/tests/
 ```
 
 ## Guidelines
@@ -16,7 +16,7 @@ pytest mnemosyne/tests/
 - **Zero runtime dependencies.** Contributions adding runtime deps will not be accepted. The stdlib-only constraint is a core design decision, not a temporary limitation.
 - **Tests required.** Every PR must include tests. The baseline is 293+ tests -- don't lower it.
 - **One concern per PR.** Keep changes focused. A bug fix is not a refactor opportunity.
-- **Run the full suite** before submitting: `pytest mnemosyne/tests/ -q`
+- **Run the full suite** before submitting: `pytest contextrrf/tests/ -q`
 
 ## Code Style
 
@@ -26,7 +26,7 @@ pytest mnemosyne/tests/
 
 ## Reporting Issues
 
-Open an issue at https://github.com/castnettech/mnemosyne/issues with:
+Open an issue at https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival/issues with:
 - What you expected
 - What happened
 - Steps to reproduce

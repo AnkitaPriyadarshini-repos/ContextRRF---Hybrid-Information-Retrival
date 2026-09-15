@@ -41,7 +41,7 @@ graph TD
 1. **File Scanning**: Recursively scans target project directories while honoring `.gitignore` rules.
 2. **Deduplication**: Content hashing (SHA-256) at both file and chunk levels prevents duplicate context storage.
 3. **AST-Aware Chunking**: Python code is parsed into semantic units (class bodies, function signatures, module top-levels) using Python's `ast` module. Non-code text is chunked into logical paragraphs or blocks.
-4. **FTS5 & Vector Indexing**: Chunks are stored in an embedded SQLite database (`mnemosyne.db`) with FTS5 virtual tables and inverted TF-IDF term dictionaries.
+4. **FTS5 & Vector Indexing**: Chunks are stored in an embedded SQLite database (`contextrrf.db`) with FTS5 virtual tables and inverted TF-IDF term dictionaries.
 
 ### Phase 2: Multi-Channel Signal Retrieval
 For a query string $q$, four independent retrieval channels generate candidate rankings:
@@ -73,10 +73,10 @@ where:
 
 | Module Path | Core Functionality |
 | :--- | :--- |
-| `mnemosyne/server.py` | ContextRRF REST API server & web research dashboard static file server |
-| `mnemosyne/ranking.py` | RRF fusion implementation, formula derivation builder, default weights |
-| `mnemosyne/retrieval.py` | Multi-channel retrieval orchestrator, symbol matching, cost model ranking |
-| `mnemosyne/ingest.py` | AST-aware code chunker, hash deduplication, bloom filter maintenance |
-| `mnemosyne/store.py` | SQLite persistence layer, FTS5 schema operations, chunk queries |
-| `mnemosyne/embeddings.py`| Sublinear TF-IDF vector backend and inverted index constructor |
+| `contextrrf/server.py` | ContextRRF REST API server & web research dashboard static file server |
+| `contextrrf/ranking.py` | RRF fusion implementation, formula derivation builder, default weights |
+| `contextrrf/retrieval.py` | Multi-channel retrieval orchestrator, symbol matching, cost model ranking |
+| `contextrrf/ingest.py` | AST-aware code chunker, hash deduplication, bloom filter maintenance |
+| `contextrrf/store.py` | SQLite persistence layer, FTS5 schema operations, chunk queries |
+| `contextrrf/embeddings.py`| Sublinear TF-IDF vector backend and inverted index constructor |
 | `web/` | Web Research Dashboard (HTML5, CSS3, Vanilla JS) |

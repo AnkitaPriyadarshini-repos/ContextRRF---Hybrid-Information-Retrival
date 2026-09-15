@@ -1,4 +1,4 @@
-# Mnemosyne -- Reference Documentation
+# ContextRRF -- Reference Documentation
 
 Complete CLI reference, configuration options, architecture overview, and integration guides. For a quick overview, see [README.md](README.md).
 
@@ -30,11 +30,11 @@ Complete CLI reference, configuration options, architecture overview, and integr
 
 ```bash
 # Install from PyPI
-pip install mnemosyne-engine
+pip install contextrrf-engine
 
 # Or install from source (for development)
-git clone https://github.com/castnettech/mnemosyne.git
-cd mnemosyne
+git clone https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival.git
+cd contextrrf
 pip install -e .
 ```
 
@@ -43,8 +43,8 @@ pip install -e .
 ```bash
 cd /your/project
 
-# Create .mnemosyne/ directory with default config and empty database
-python -m mnemosyne init
+# Create .contextrrf/ directory with default config and empty database
+python -m contextrrf init
 ```
 
 This creates:
@@ -55,48 +55,48 @@ This creates:
 
 ```bash
 # Index all supported files
-python -m mnemosyne ingest
+python -m contextrrf ingest
 
 # Index specific files only
-python -m mnemosyne ingest src/auth.py src/models.py
+python -m contextrrf ingest src/auth.py src/models.py
 
 # Force full re-index, ignoring cached hashes
-python -m mnemosyne ingest --full
+python -m contextrrf ingest --full
 
 # Preview what would be indexed without writing
-python -m mnemosyne ingest --dry-run
+python -m contextrrf ingest --dry-run
 ```
 
 ### Query for Relevant Context
 
 ```bash
 # Retrieve context with default token budget (from config)
-python -m mnemosyne query "how does authentication work"
+python -m contextrrf query "how does authentication work"
 
 # Set an explicit token budget
-python -m mnemosyne query "how does authentication work" --budget 6000
+python -m contextrrf query "how does authentication work" --budget 6000
 
 # Get JSON output for programmatic consumption
-python -m mnemosyne query "database connection pooling" --format json
+python -m contextrrf query "database connection pooling" --format json
 
 # Include per-signal scores in output headers
-python -m mnemosyne query "rate limiting logic" --show-scores
+python -m contextrrf query "rate limiting logic" --show-scores
 
 # Disable compression fallback
-python -m mnemosyne query "error handling patterns" --no-compress
+python -m contextrrf query "error handling patterns" --no-compress
 
 # Attach a session ID for usage tracking continuity
-python -m mnemosyne query "JWT validation" --session my-session-001
+python -m contextrrf query "JWT validation" --session my-session-001
 ```
 
 ### Preview Compression
 
 ```bash
 # See what the compression pipeline produces for a specific file
-python -m mnemosyne compress src/auth.py
+python -m contextrrf compress src/auth.py
 
 # Override target compression ratio
-python -m mnemosyne compress src/auth.py --ratio 0.3
+python -m contextrrf compress src/auth.py --ratio 0.3
 ```
 
 Sample output:
@@ -128,10 +128,10 @@ class AuthManager:
 
 ```bash
 # Summary statistics
-python -m mnemosyne stats
+python -m contextrrf stats
 
 # Detailed breakdown including chunk types, languages, cache state
-python -m mnemosyne stats --detailed
+python -m contextrrf stats --detailed
 ```
 
 Sample output:
@@ -166,50 +166,50 @@ Languages:
 
 ```bash
 # Show what changed since the last ingest
-python -m mnemosyne delta
+python -m contextrrf delta
 
 # Limit to specific paths
-python -m mnemosyne delta src/auth.py src/models.py
+python -m contextrrf delta src/auth.py src/models.py
 ```
 
 ### Manage the ARC Cache
 
 ```bash
 # Show current cache tier distribution
-python -m mnemosyne cache show
+python -m contextrrf cache show
 
 # Pre-warm the cache with the most-accessed chunks
-python -m mnemosyne cache warm
+python -m contextrrf cache warm
 
 # Clear all cache state
-python -m mnemosyne cache clear
+python -m contextrrf cache clear
 ```
 
 ### View the Audit Log
 
 ```bash
 # Show the last 20 audit entries
-python -m mnemosyne audit
+python -m contextrrf audit
 
 # Show the last 100 entries
-python -m mnemosyne audit --last 100
+python -m contextrrf audit --last 100
 ```
 
 ### Garbage Collection
 
 ```bash
 # Preview what would be removed
-python -m mnemosyne gc --dry-run
+python -m contextrrf gc --dry-run
 
 # Run garbage collection
-python -m mnemosyne gc
+python -m contextrrf gc
 ```
 
 ---
 
 ## LLM Agent Integration
 
-Mnemosyne is a standalone CLI tool. All consumers interact with Mnemosyne directly via the CLI or Python API.
+ContextRRF is a standalone CLI tool. All consumers interact with ContextRRF directly via the CLI or Python API.
 
 ### Claude Code
 
@@ -218,12 +218,12 @@ Add this near the top of your project's `CLAUDE.md`:
 ```markdown
 ## Context Retrieval -- MANDATORY
 
-Before answering any question about this codebase, ALWAYS query the Mnemosyne index first:
+Before answering any question about this codebase, ALWAYS query the ContextRRF index first:
 
-    ! mnemosyne query "<your question>" --budget 8000
+    ! contextrrf query "<your question>" --budget 8000
 
 Use the returned chunks as your primary context for answering. Only use Read, Grep,
-or Glob if the Mnemosyne chunks do not fully answer the question. Always cite which
+or Glob if the ContextRRF chunks do not fully answer the question. Always cite which
 files and functions you found the answer in.
 ```
 
@@ -235,18 +235,18 @@ Add to `.cursorrules` in your project root:
 
 ```
 When answering questions about this codebase, run this command first:
-mnemosyne query "<your question>" --budget 8000
+contextrrf query "<your question>" --budget 8000
 Use the output to identify relevant files before reading them.
 ```
 
 ### Other agents (Aider, GPT, custom)
 
-Any agent that can execute shell commands or read a system prompt can use Mnemosyne. The pattern is the same: query first, then read the specific files Mnemosyne identifies.
+Any agent that can execute shell commands or read a system prompt can use ContextRRF. The pattern is the same: query first, then read the specific files ContextRRF identifies.
 
 ### From scripts
 
 ```bash
-CONTEXT=$(mnemosyne query "database connection pooling" --format json --budget 4000)
+CONTEXT=$(contextrrf query "database connection pooling" --format json --budget 4000)
 ```
 
 Or via `subprocess`:
@@ -254,7 +254,7 @@ Or via `subprocess`:
 ```python
 import subprocess, json
 result = subprocess.run(
-    ["mnemosyne", "query", "auth middleware", "--format", "json", "--budget", "4000"],
+    ["contextrrf", "query", "auth middleware", "--format", "json", "--budget", "4000"],
     capture_output=True, text=True
 )
 chunks = json.loads(result.stdout)
@@ -263,15 +263,15 @@ chunks = json.loads(result.stdout)
 ### Programmatic Python API
 
 ```python
-from mnemosyne.retrieval import RetrievalEngine
-from mnemosyne.config import Config
+from contextrrf.retrieval import RetrievalEngine
+from contextrrf.config import Config
 
 config = Config.load()
 engine = RetrievalEngine(config)
 results = engine.query("authentication middleware", budget=6000)
 ```
 
-The JSON-RPC daemon mode (`mnemosyne daemon start`) keeps indexes warm for low-latency repeated queries.
+The JSON-RPC daemon mode (`contextrrf daemon start`) keeps indexes warm for low-latency repeated queries.
 
 ### Keeping the Index Fresh
 
@@ -279,31 +279,31 @@ For active development, run `ingest` as part of your save workflow or as a file-
 
 ```bash
 # Simple: re-ingest changed files manually before querying
-python -m mnemosyne ingest src/auth.py
+python -m contextrrf ingest src/auth.py
 
 # With entr (file watcher):
-find src/ -name "*.py" | entr python -m mnemosyne ingest /_
+find src/ -name "*.py" | entr python -m contextrrf ingest /_
 
 # As a pre-commit hook:
 # .git/hooks/pre-commit
-python -m mnemosyne ingest $(git diff --cached --name-only)
+python -m contextrrf ingest $(git diff --cached --name-only)
 ```
 
 ---
 
 ## CLI Reference
 
-### `mnemosyne init`
+### `contextrrf init`
 
-Initialize a `.mnemosyne/` workspace in the current directory.
+Initialize a `.contextrrf/` workspace in the current directory.
 
-Creates `.mnemosyne/config.toml` with all default values and `.mnemosyne/mnemosyne.db` with the full schema applied. Safe to run in an existing project -- exits immediately if `.mnemosyne/` already exists.
+Creates `.contextrrf/config.toml` with all default values and `.contextrrf/contextrrf.db` with the full schema applied. Safe to run in an existing project -- exits immediately if `.contextrrf/` already exists.
 
 **No flags.**
 
 ---
 
-### `mnemosyne ingest [paths...] [--full] [--dry-run]`
+### `contextrrf ingest [paths...] [--full] [--dry-run]`
 
 Index files into the knowledge base.
 
@@ -328,7 +328,7 @@ Elapsed:        0.52s
 
 ---
 
-### `mnemosyne query <text> [options]`
+### `contextrrf query <text> [options]`
 
 Retrieve relevant context chunks for a query string.
 
@@ -361,7 +361,7 @@ Results where the underlying file has changed since indexing are marked `[STALE]
 
 ---
 
-### `mnemosyne stats [--detailed]`
+### `contextrrf stats [--detailed]`
 
 Display index and cache statistics.
 
@@ -371,7 +371,7 @@ Display index and cache statistics.
 
 ---
 
-### `mnemosyne compress <file> [--ratio FLOAT]`
+### `contextrrf compress <file> [--ratio FLOAT]`
 
 Preview the four-stage compression pipeline for a single file.
 
@@ -384,7 +384,7 @@ Displays original token count, compressed token count, character ratio, and the 
 
 ---
 
-### `mnemosyne cache [show|clear|warm]`
+### `contextrrf cache [show|clear|warm]`
 
 Manage the ARC cache persisted in the database.
 
@@ -396,7 +396,7 @@ Manage the ARC cache persisted in the database.
 
 ---
 
-### `mnemosyne delta [paths...]`
+### `contextrrf delta [paths...]`
 
 Show file changes detected since the last index run.
 
@@ -408,7 +408,7 @@ Compares on-disk mtime and content against stored `FileRecord` entries. Reports 
 
 ---
 
-### `mnemosyne audit [--last N]`
+### `contextrrf audit [--last N]`
 
 Print recent entries from the append-only audit log.
 
@@ -420,7 +420,7 @@ Audit entries are JSON objects: `{"ts": "2026-03-21T10:00:00Z", "op": "ingest_co
 
 ---
 
-### `mnemosyne gc [--dry-run]`
+### `contextrrf gc [--dry-run]`
 
 Garbage collect orphaned chunks and stale file records.
 
@@ -432,7 +432,7 @@ Removes chunks belonging to soft-deleted file records. Marks file records as del
 
 ---
 
-### `mnemosyne analytics [--session SESSION_ID] [--top-chunks N]`
+### `contextrrf analytics [--session SESSION_ID] [--top-chunks N]`
 
 Display feedback precision metrics and top-used chunks from recorded usage events.
 
@@ -445,9 +445,9 @@ Reports precision-at-k (ratio of used to retrieved chunks), total feedback event
 
 ---
 
-### `mnemosyne daemon <start|stop|status> [--foreground]`
+### `contextrrf daemon <start|stop|status> [--foreground]`
 
-Manage the JSON-RPC background daemon. The daemon keeps SQLite, the TF-IDF inverted index, analytics, and the prefetcher warm across requests, eliminating cold-start overhead. Communicates over a Unix domain socket at `.mnemosyne/mnemosyne.sock`.
+Manage the JSON-RPC background daemon. The daemon keeps SQLite, the TF-IDF inverted index, analytics, and the prefetcher warm across requests, eliminating cold-start overhead. Communicates over a Unix domain socket at `.contextrrf/contextrrf.sock`.
 
 | Action | Description |
 |---|---|
@@ -461,13 +461,13 @@ Manage the JSON-RPC background daemon. The daemon keeps SQLite, the TF-IDF inver
 
 ---
 
-### `mnemosyne health`
+### `contextrrf health`
 
 Report index health with pass/fail checks for schema integrity, vocabulary state, and compression consistency. Suitable for monitoring dashboards (exit code 0 = healthy).
 
 ---
 
-### `mnemosyne benchmark`
+### `contextrrf benchmark`
 
 Run the internal benchmark suite on your project. Reports precision-at-k, token reduction, and speed metrics.
 
@@ -475,7 +475,7 @@ Run the internal benchmark suite on your project. Reports precision-at-k, token 
 
 ## Configuration Reference
 
-Configuration is read from `.mnemosyne/config.toml` in the project root, deep-merged on top of built-in defaults. The file is created with defaults by `mnemosyne init` and is safe to edit.
+Configuration is read from `.contextrrf/config.toml` in the project root, deep-merged on top of built-in defaults. The file is created with defaults by `contextrrf init` and is safe to edit.
 
 ### `[general]`
 
@@ -541,7 +541,7 @@ Configuration is read from `.mnemosyne/config.toml` in the project root, deep-me
 
 ## Architecture Overview
 
-Mnemosyne is organized into two primary pipelines -- ingestion and retrieval -- connected by a persistent SQLite store with WAL mode, FTS5 full-text search, and JSON1 for sparse embedding storage.
+ContextRRF is organized into two primary pipelines -- ingestion and retrieval -- connected by a persistent SQLite store with WAL mode, FTS5 full-text search, and JSON1 for sparse embedding storage.
 
 ### Ingestion Pipeline
 
@@ -565,9 +565,9 @@ Mnemosyne is organized into two primary pipelines -- ingestion and retrieval -- 
 
 ### 1. Cost-Model-Driven Retrieval
 
-Every database query optimizer has understood for decades that the cost of executing a plan matters as much as the estimated result quality. Mnemosyne applies the same principle to context assembly.
+Every database query optimizer has understood for decades that the cost of executing a plan matters as much as the estimated result quality. ContextRRF applies the same principle to context assembly.
 
-After fusing signals from multiple retrieval sources, Mnemosyne re-ranks every candidate by its **value density** with structural awareness:
+After fusing signals from multiple retrieval sources, ContextRRF re-ranks every candidate by its **value density** with structural awareness:
 
 ```
 value_density = (rrf_score * code_boost * (1 - 0.5 * boilerplate)) / (1 + ln(1 + token_count))
@@ -579,7 +579,7 @@ HTML, CSS, and Markdown chunks receive an automatic `boilerplate = 0.85` penalty
 
 When the budget is tight (the common case in production), the cost model ensures the most informative content per token is always selected. This is analogous to a database query planner choosing an index scan over a full table scan: the optimal plan depends on both selectivity and execution cost.
 
-Competitors that rank purely by relevance without token cost will consistently select large, moderately-relevant chunks over small, highly-relevant ones. Mnemosyne does not make this mistake.
+Competitors that rank purely by relevance without token cost will consistently select large, moderately-relevant chunks over small, highly-relevant ones. ContextRRF does not make this mistake.
 
 Implementation: `ranking.py` -- `cost_model_score()` and `budget_cut()`.
 
@@ -587,7 +587,7 @@ Implementation: `ranking.py` -- `cost_model_score()` and `budget_cut()`.
 
 ### 2. Four-Stage Compression Pipeline
 
-When a highly-relevant chunk is too large to fit in the remaining context budget, Mnemosyne does not discard it. Instead, it applies a four-stage compression pipeline to reduce the chunk's token count while preserving its semantic content.
+When a highly-relevant chunk is too large to fit in the remaining context budget, ContextRRF does not discard it. Instead, it applies a four-stage compression pipeline to reduce the chunk's token count while preserving its semantic content.
 
 **Stage 1 -- Structural Preservation**
 
@@ -632,7 +632,7 @@ Implementation: `compress.py` -- `Compressor`.
 
 Every competing tool that implements any caching at all uses FIFO or LRU eviction. FIFO is obviously wrong (recently-added items are not necessarily recently-used). LRU is better but conflates recency with frequency: a chunk accessed 50 times last week but not at all today will be evicted in favor of a chunk accessed once this morning.
 
-Mnemosyne implements the **Adaptive Replacement Cache (ARC)**, based on the 2003 USENIX FAST paper by Megiddo and Modha.
+ContextRRF implements the **Adaptive Replacement Cache (ARC)**, based on the 2003 USENIX FAST paper by Megiddo and Modha.
 
 ARC maintains four ordered dictionaries:
 
@@ -655,7 +655,7 @@ Implementation: `cache.py` -- `ARCCache`.
 
 A single search signal is fragile. BM25 (term frequency in the document) misses semantic similarity between synonymous terms. TF-IDF vector search misses exact keyword matches in rare but critical identifiers. Usage frequency alone degenerates into "always return what was used before." Pre-fetch alone causes stale patterns to persist.
 
-Mnemosyne fuses **six signals** via Reciprocal Rank Fusion (RRF) plus post-fusion boosting:
+ContextRRF fuses **six signals** via Reciprocal Rank Fusion (RRF) plus post-fusion boosting:
 
 ```
 rrf_score(id) = sum over sources: weight[src] / (k + rank[src](id))
@@ -679,7 +679,7 @@ RRF is robust to score scale differences between signals (because it operates on
 
 **TF-IDF with code-aware tokenization**: The `TFIDFBackend` splits camelCase identifiers (e.g. `getUserById` -> `get`, `user`, `by`, `id`) and snake_case identifiers (e.g. `auth_token_expiry` -> `auth`, `token`, `expiry`). This dramatically improves recall for code search where identifiers carry the semantics.
 
-**Usage frequency with time decay**: Rather than a simple access count, Mnemosyne applies a half-life decay model: `score = 2^(-age_days / halflife)`. A chunk accessed yesterday contributes more than one accessed last month. The default halflife is 7 days. This prevents the system from ossifying around old patterns.
+**Usage frequency with time decay**: Rather than a simple access count, ContextRRF applies a half-life decay model: `score = 2^(-age_days / halflife)`. A chunk accessed yesterday contributes more than one accessed last month. The default halflife is 7 days. This prevents the system from ossifying around old patterns.
 
 **Pre-fetch boosting**: Query signatures (normalized, sorted token sets hashed to a 16-character fingerprint) are matched against historical patterns. When a pattern has been seen at least `min_hits` times (default: 3), its associated chunks receive a maximum-priority boost in the fusion step. This allows the system to learn "whenever the developer asks about authentication, chunks A, B, and C are always relevant" without any explicit configuration.
 
@@ -689,7 +689,7 @@ Implementation: `retrieval.py` -- `RetrievalEngine`, `ranking.py` -- `rrf_fuse`.
 
 ### 5. Delta-Aware Context Injection
 
-Sending an entire 400-line file to an LLM when only 8 lines changed is a 98% token waste. Mnemosyne tracks per-session chunk delivery state and computes diffs at both the file level and the chunk level.
+Sending an entire 400-line file to an LLM when only 8 lines changed is a 98% token waste. ContextRRF tracks per-session chunk delivery state and computes diffs at both the file level and the chunk level.
 
 **File-level delta detection**: `DeltaTracker.detect_changes()` walks the project directory, comparing on-disk mtime and content hashes against `FileRecord` entries in the database. It classifies every file as `added`, `modified`, or `deleted`. For modified files it computes a `difflib.unified_diff` between the indexed content and the current content.
 
@@ -707,7 +707,7 @@ Implementation: `delta.py` -- `DeltaTracker`.
 
 Copy-paste is ubiquitous in real codebases. Error-handling boilerplate, configuration loading patterns, and utility functions frequently appear in multiple files with minor or no variation. Without deduplication, the index balloons and identical content competes with itself in retrieval rankings.
 
-Mnemosyne applies **content-addressed storage** at the chunk level:
+ContextRRF applies **content-addressed storage** at the chunk level:
 
 1. Each chunk's text is **whitespace-normalized** (CRLF -> LF, trailing whitespace stripped per line) before hashing. This ensures that the same logical content with different line-ending conventions produces the same hash -- critical for cross-platform teams.
 
@@ -741,11 +741,11 @@ Tested with Claude Opus 4.6 (1M context):
 | **Compression** | 111K tokens indexed, 8K delivered (**99% reduction**) | 40-70% chunk-level compression |
 | **Query latency** | <500ms median cold, <200ms daemon | <500ms median cold |
 
-The pattern: on large repos, Mnemosyne saves 70%+ of tokens with no quality loss. On small repos, it matches baseline speed and quality. It never makes the answer worse.
+The pattern: on large repos, ContextRRF saves 70%+ of tokens with no quality loss. On small repos, it matches baseline speed and quality. It never makes the answer worse.
 
 ### Complex Domain Query (MEAT Detection Pipeline)
 
-| Metric | Mnemosyne | Baseline | Improvement |
+| Metric | ContextRRF | Baseline | Improvement |
 |---|---|---|---|
 | Tool calls | 1 | 13 | **-92%** |
 | Wall-clock time | 1.2s | 72s | **-98%** |
@@ -768,7 +768,7 @@ The pattern: on large repos, Mnemosyne saves 70%+ of tokens with no quality loss
 
 Incremental re-ingest of an unchanged project (Bloom + mtime check): **< 50ms** regardless of project size.
 
-### Query Performance# Mnemosyne -- Reference Documentation
+### Query Performance# ContextRRF -- Reference Documentation
 
 Complete CLI reference, configuration options, architecture overview, and integration guides. For a quick overview, see [README.md](README.md).
 
@@ -800,11 +800,11 @@ Complete CLI reference, configuration options, architecture overview, and integr
 
 ```bash
 # Install from PyPI
-pip install mnemosyne-engine
+pip install contextrrf-engine
 
 # Or install from source (for development)
-git clone https://github.com/castnettech/mnemosyne.git
-cd mnemosyne
+git clone https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival.git
+cd contextrrf
 pip install -e .
 ```
 
@@ -813,8 +813,8 @@ pip install -e .
 ```bash
 cd /your/project
 
-# Create .mnemosyne/ directory with default config and empty database
-python -m mnemosyne init
+# Create .contextrrf/ directory with default config and empty database
+python -m contextrrf init
 ```
 
 This creates:
@@ -825,48 +825,48 @@ This creates:
 
 ```bash
 # Index all supported files
-python -m mnemosyne ingest
+python -m contextrrf ingest
 
 # Index specific files only
-python -m mnemosyne ingest src/auth.py src/models.py
+python -m contextrrf ingest src/auth.py src/models.py
 
 # Force full re-index, ignoring cached hashes
-python -m mnemosyne ingest --full
+python -m contextrrf ingest --full
 
 # Preview what would be indexed without writing
-python -m mnemosyne ingest --dry-run
+python -m contextrrf ingest --dry-run
 ```
 
 ### Query for Relevant Context
 
 ```bash
 # Retrieve context with default token budget (from config)
-python -m mnemosyne query "how does authentication work"
+python -m contextrrf query "how does authentication work"
 
 # Set an explicit token budget
-python -m mnemosyne query "how does authentication work" --budget 6000
+python -m contextrrf query "how does authentication work" --budget 6000
 
 # Get JSON output for programmatic consumption
-python -m mnemosyne query "database connection pooling" --format json
+python -m contextrrf query "database connection pooling" --format json
 
 # Include per-signal scores in output headers
-python -m mnemosyne query "rate limiting logic" --show-scores
+python -m contextrrf query "rate limiting logic" --show-scores
 
 # Disable compression fallback
-python -m mnemosyne query "error handling patterns" --no-compress
+python -m contextrrf query "error handling patterns" --no-compress
 
 # Attach a session ID for usage tracking continuity
-python -m mnemosyne query "JWT validation" --session my-session-001
+python -m contextrrf query "JWT validation" --session my-session-001
 ```
 
 ### Preview Compression
 
 ```bash
 # See what the compression pipeline produces for a specific file
-python -m mnemosyne compress src/auth.py
+python -m contextrrf compress src/auth.py
 
 # Override target compression ratio
-python -m mnemosyne compress src/auth.py --ratio 0.3
+python -m contextrrf compress src/auth.py --ratio 0.3
 ```
 
 Sample output:
@@ -898,10 +898,10 @@ class AuthManager:
 
 ```bash
 # Summary statistics
-python -m mnemosyne stats
+python -m contextrrf stats
 
 # Detailed breakdown including chunk types, languages, cache state
-python -m mnemosyne stats --detailed
+python -m contextrrf stats --detailed
 ```
 
 Sample output:
@@ -936,50 +936,50 @@ Languages:
 
 ```bash
 # Show what changed since the last ingest
-python -m mnemosyne delta
+python -m contextrrf delta
 
 # Limit to specific paths
-python -m mnemosyne delta src/auth.py src/models.py
+python -m contextrrf delta src/auth.py src/models.py
 ```
 
 ### Manage the ARC Cache
 
 ```bash
 # Show current cache tier distribution
-python -m mnemosyne cache show
+python -m contextrrf cache show
 
 # Pre-warm the cache with the most-accessed chunks
-python -m mnemosyne cache warm
+python -m contextrrf cache warm
 
 # Clear all cache state
-python -m mnemosyne cache clear
+python -m contextrrf cache clear
 ```
 
 ### View the Audit Log
 
 ```bash
 # Show the last 20 audit entries
-python -m mnemosyne audit
+python -m contextrrf audit
 
 # Show the last 100 entries
-python -m mnemosyne audit --last 100
+python -m contextrrf audit --last 100
 ```
 
 ### Garbage Collection
 
 ```bash
 # Preview what would be removed
-python -m mnemosyne gc --dry-run
+python -m contextrrf gc --dry-run
 
 # Run garbage collection
-python -m mnemosyne gc
+python -m contextrrf gc
 ```
 
 ---
 
 ## LLM Agent Integration
 
-Mnemosyne is a standalone CLI tool. All consumers interact with Mnemosyne directly via the CLI or Python API.
+ContextRRF is a standalone CLI tool. All consumers interact with ContextRRF directly via the CLI or Python API.
 
 ### Claude Code
 
@@ -988,12 +988,12 @@ Add this near the top of your project's `CLAUDE.md`:
 ```markdown
 ## Context Retrieval -- MANDATORY
 
-Before answering any question about this codebase, ALWAYS query the Mnemosyne index first:
+Before answering any question about this codebase, ALWAYS query the ContextRRF index first:
 
-    ! mnemosyne query "<your question>" --budget 8000
+    ! contextrrf query "<your question>" --budget 8000
 
 Use the returned chunks as your primary context for answering. Only use Read, Grep,
-or Glob if the Mnemosyne chunks do not fully answer the question. Always cite which
+or Glob if the ContextRRF chunks do not fully answer the question. Always cite which
 files and functions you found the answer in.
 ```
 
@@ -1005,18 +1005,18 @@ Add to `.cursorrules` in your project root:
 
 ```
 When answering questions about this codebase, run this command first:
-mnemosyne query "<your question>" --budget 8000
+contextrrf query "<your question>" --budget 8000
 Use the output to identify relevant files before reading them.
 ```
 
 ### Other agents (Aider, GPT, custom)
 
-Any agent that can execute shell commands or read a system prompt can use Mnemosyne. The pattern is the same: query first, then read the specific files Mnemosyne identifies.
+Any agent that can execute shell commands or read a system prompt can use ContextRRF. The pattern is the same: query first, then read the specific files ContextRRF identifies.
 
 ### From scripts
 
 ```bash
-CONTEXT=$(mnemosyne query "database connection pooling" --format json --budget 4000)
+CONTEXT=$(contextrrf query "database connection pooling" --format json --budget 4000)
 ```
 
 Or via `subprocess`:
@@ -1024,7 +1024,7 @@ Or via `subprocess`:
 ```python
 import subprocess, json
 result = subprocess.run(
-    ["mnemosyne", "query", "auth middleware", "--format", "json", "--budget", "4000"],
+    ["contextrrf", "query", "auth middleware", "--format", "json", "--budget", "4000"],
     capture_output=True, text=True
 )
 chunks = json.loads(result.stdout)
@@ -1033,15 +1033,15 @@ chunks = json.loads(result.stdout)
 ### Programmatic Python API
 
 ```python
-from mnemosyne.retrieval import RetrievalEngine
-from mnemosyne.config import Config
+from contextrrf.retrieval import RetrievalEngine
+from contextrrf.config import Config
 
 config = Config.load()
 engine = RetrievalEngine(config)
 results = engine.query("authentication middleware", budget=6000)
 ```
 
-The JSON-RPC daemon mode (`mnemosyne daemon start`) keeps indexes warm for low-latency repeated queries.
+The JSON-RPC daemon mode (`contextrrf daemon start`) keeps indexes warm for low-latency repeated queries.
 
 ### Keeping the Index Fresh
 
@@ -1049,31 +1049,31 @@ For active development, run `ingest` as part of your save workflow or as a file-
 
 ```bash
 # Simple: re-ingest changed files manually before querying
-python -m mnemosyne ingest src/auth.py
+python -m contextrrf ingest src/auth.py
 
 # With entr (file watcher):
-find src/ -name "*.py" | entr python -m mnemosyne ingest /_
+find src/ -name "*.py" | entr python -m contextrrf ingest /_
 
 # As a pre-commit hook:
 # .git/hooks/pre-commit
-python -m mnemosyne ingest $(git diff --cached --name-only)
+python -m contextrrf ingest $(git diff --cached --name-only)
 ```
 
 ---
 
 ## CLI Reference
 
-### `mnemosyne init`
+### `contextrrf init`
 
-Initialize a `.mnemosyne/` workspace in the current directory.
+Initialize a `.contextrrf/` workspace in the current directory.
 
-Creates `.mnemosyne/config.toml` with all default values and `.mnemosyne/mnemosyne.db` with the full schema applied. Safe to run in an existing project -- exits immediately if `.mnemosyne/` already exists.
+Creates `.contextrrf/config.toml` with all default values and `.contextrrf/contextrrf.db` with the full schema applied. Safe to run in an existing project -- exits immediately if `.contextrrf/` already exists.
 
 **No flags.**
 
 ---
 
-### `mnemosyne ingest [paths...] [--full] [--dry-run]`
+### `contextrrf ingest [paths...] [--full] [--dry-run]`
 
 Index files into the knowledge base.
 
@@ -1098,7 +1098,7 @@ Elapsed:        0.52s
 
 ---
 
-### `mnemosyne query <text> [options]`
+### `contextrrf query <text> [options]`
 
 Retrieve relevant context chunks for a query string.
 
@@ -1131,7 +1131,7 @@ Results where the underlying file has changed since indexing are marked `[STALE]
 
 ---
 
-### `mnemosyne stats [--detailed]`
+### `contextrrf stats [--detailed]`
 
 Display index and cache statistics.
 
@@ -1141,7 +1141,7 @@ Display index and cache statistics.
 
 ---
 
-### `mnemosyne compress <file> [--ratio FLOAT]`
+### `contextrrf compress <file> [--ratio FLOAT]`
 
 Preview the four-stage compression pipeline for a single file.
 
@@ -1154,7 +1154,7 @@ Displays original token count, compressed token count, character ratio, and the 
 
 ---
 
-### `mnemosyne cache [show|clear|warm]`
+### `contextrrf cache [show|clear|warm]`
 
 Manage the ARC cache persisted in the database.
 
@@ -1166,7 +1166,7 @@ Manage the ARC cache persisted in the database.
 
 ---
 
-### `mnemosyne delta [paths...]`
+### `contextrrf delta [paths...]`
 
 Show file changes detected since the last index run.
 
@@ -1178,7 +1178,7 @@ Compares on-disk mtime and content against stored `FileRecord` entries. Reports 
 
 ---
 
-### `mnemosyne audit [--last N]`
+### `contextrrf audit [--last N]`
 
 Print recent entries from the append-only audit log.
 
@@ -1190,7 +1190,7 @@ Audit entries are JSON objects: `{"ts": "2026-03-21T10:00:00Z", "op": "ingest_co
 
 ---
 
-### `mnemosyne gc [--dry-run]`
+### `contextrrf gc [--dry-run]`
 
 Garbage collect orphaned chunks and stale file records.
 
@@ -1202,7 +1202,7 @@ Removes chunks belonging to soft-deleted file records. Marks file records as del
 
 ---
 
-### `mnemosyne analytics [--session SESSION_ID] [--top-chunks N]`
+### `contextrrf analytics [--session SESSION_ID] [--top-chunks N]`
 
 Display feedback precision metrics and top-used chunks from recorded usage events.
 
@@ -1215,9 +1215,9 @@ Reports precision-at-k (ratio of used to retrieved chunks), total feedback event
 
 ---
 
-### `mnemosyne daemon <start|stop|status> [--foreground]`
+### `contextrrf daemon <start|stop|status> [--foreground]`
 
-Manage the JSON-RPC background daemon. The daemon keeps SQLite, the TF-IDF inverted index, analytics, and the prefetcher warm across requests, eliminating cold-start overhead. Communicates over a Unix domain socket at `.mnemosyne/mnemosyne.sock`.
+Manage the JSON-RPC background daemon. The daemon keeps SQLite, the TF-IDF inverted index, analytics, and the prefetcher warm across requests, eliminating cold-start overhead. Communicates over a Unix domain socket at `.contextrrf/contextrrf.sock`.
 
 | Action | Description |
 |---|---|
@@ -1231,13 +1231,13 @@ Manage the JSON-RPC background daemon. The daemon keeps SQLite, the TF-IDF inver
 
 ---
 
-### `mnemosyne health`
+### `contextrrf health`
 
 Report index health with pass/fail checks for schema integrity, vocabulary state, and compression consistency. Suitable for monitoring dashboards (exit code 0 = healthy).
 
 ---
 
-### `mnemosyne benchmark`
+### `contextrrf benchmark`
 
 Run the internal benchmark suite on your project. Reports precision-at-k, token reduction, and speed metrics.
 
@@ -1245,7 +1245,7 @@ Run the internal benchmark suite on your project. Reports precision-at-k, token 
 
 ## Configuration Reference
 
-Configuration is read from `.mnemosyne/config.toml` in the project root, deep-merged on top of built-in defaults. The file is created with defaults by `mnemosyne init` and is safe to edit.
+Configuration is read from `.contextrrf/config.toml` in the project root, deep-merged on top of built-in defaults. The file is created with defaults by `contextrrf init` and is safe to edit.
 
 ### `[general]`
 
@@ -1311,7 +1311,7 @@ Configuration is read from `.mnemosyne/config.toml` in the project root, deep-me
 
 ## Architecture Overview
 
-Mnemosyne is organized into two primary pipelines -- ingestion and retrieval -- connected by a persistent SQLite store with WAL mode, FTS5 full-text search, and JSON1 for sparse embedding storage.
+ContextRRF is organized into two primary pipelines -- ingestion and retrieval -- connected by a persistent SQLite store with WAL mode, FTS5 full-text search, and JSON1 for sparse embedding storage.
 
 ### Ingestion Pipeline
 
@@ -1335,9 +1335,9 @@ Mnemosyne is organized into two primary pipelines -- ingestion and retrieval -- 
 
 ### 1. Cost-Model-Driven Retrieval
 
-Every database query optimizer has understood for decades that the cost of executing a plan matters as much as the estimated result quality. Mnemosyne applies the same principle to context assembly.
+Every database query optimizer has understood for decades that the cost of executing a plan matters as much as the estimated result quality. ContextRRF applies the same principle to context assembly.
 
-After fusing signals from multiple retrieval sources, Mnemosyne re-ranks every candidate by its **value density** with structural awareness:
+After fusing signals from multiple retrieval sources, ContextRRF re-ranks every candidate by its **value density** with structural awareness:
 
 ```
 value_density = (rrf_score * code_boost * (1 - 0.5 * boilerplate)) / (1 + ln(1 + token_count))
@@ -1349,7 +1349,7 @@ HTML, CSS, and Markdown chunks receive an automatic `boilerplate = 0.85` penalty
 
 When the budget is tight (the common case in production), the cost model ensures the most informative content per token is always selected. This is analogous to a database query planner choosing an index scan over a full table scan: the optimal plan depends on both selectivity and execution cost.
 
-Competitors that rank purely by relevance without token cost will consistently select large, moderately-relevant chunks over small, highly-relevant ones. Mnemosyne does not make this mistake.
+Competitors that rank purely by relevance without token cost will consistently select large, moderately-relevant chunks over small, highly-relevant ones. ContextRRF does not make this mistake.
 
 Implementation: `ranking.py` -- `cost_model_score()` and `budget_cut()`.
 
@@ -1357,7 +1357,7 @@ Implementation: `ranking.py` -- `cost_model_score()` and `budget_cut()`.
 
 ### 2. Four-Stage Compression Pipeline
 
-When a highly-relevant chunk is too large to fit in the remaining context budget, Mnemosyne does not discard it. Instead, it applies a four-stage compression pipeline to reduce the chunk's token count while preserving its semantic content.
+When a highly-relevant chunk is too large to fit in the remaining context budget, ContextRRF does not discard it. Instead, it applies a four-stage compression pipeline to reduce the chunk's token count while preserving its semantic content.
 
 **Stage 1 -- Structural Preservation**
 
@@ -1402,7 +1402,7 @@ Implementation: `compress.py` -- `Compressor`.
 
 Every competing tool that implements any caching at all uses FIFO or LRU eviction. FIFO is obviously wrong (recently-added items are not necessarily recently-used). LRU is better but conflates recency with frequency: a chunk accessed 50 times last week but not at all today will be evicted in favor of a chunk accessed once this morning.
 
-Mnemosyne implements the **Adaptive Replacement Cache (ARC)**, based on the 2003 USENIX FAST paper by Megiddo and Modha.
+ContextRRF implements the **Adaptive Replacement Cache (ARC)**, based on the 2003 USENIX FAST paper by Megiddo and Modha.
 
 ARC maintains four ordered dictionaries:
 
@@ -1425,7 +1425,7 @@ Implementation: `cache.py` -- `ARCCache`.
 
 A single search signal is fragile. BM25 (term frequency in the document) misses semantic similarity between synonymous terms. TF-IDF vector search misses exact keyword matches in rare but critical identifiers. Usage frequency alone degenerates into "always return what was used before." Pre-fetch alone causes stale patterns to persist.
 
-Mnemosyne fuses **six signals** via Reciprocal Rank Fusion (RRF) plus post-fusion boosting:
+ContextRRF fuses **six signals** via Reciprocal Rank Fusion (RRF) plus post-fusion boosting:
 
 ```
 rrf_score(id) = sum over sources: weight[src] / (k + rank[src](id))
@@ -1449,7 +1449,7 @@ RRF is robust to score scale differences between signals (because it operates on
 
 **TF-IDF with code-aware tokenization**: The `TFIDFBackend` splits camelCase identifiers (e.g. `getUserById` -> `get`, `user`, `by`, `id`) and snake_case identifiers (e.g. `auth_token_expiry` -> `auth`, `token`, `expiry`). This dramatically improves recall for code search where identifiers carry the semantics.
 
-**Usage frequency with time decay**: Rather than a simple access count, Mnemosyne applies a half-life decay model: `score = 2^(-age_days / halflife)`. A chunk accessed yesterday contributes more than one accessed last month. The default halflife is 7 days. This prevents the system from ossifying around old patterns.
+**Usage frequency with time decay**: Rather than a simple access count, ContextRRF applies a half-life decay model: `score = 2^(-age_days / halflife)`. A chunk accessed yesterday contributes more than one accessed last month. The default halflife is 7 days. This prevents the system from ossifying around old patterns.
 
 **Pre-fetch boosting**: Query signatures (normalized, sorted token sets hashed to a 16-character fingerprint) are matched against historical patterns. When a pattern has been seen at least `min_hits` times (default: 3), its associated chunks receive a maximum-priority boost in the fusion step. This allows the system to learn "whenever the developer asks about authentication, chunks A, B, and C are always relevant" without any explicit configuration.
 
@@ -1459,7 +1459,7 @@ Implementation: `retrieval.py` -- `RetrievalEngine`, `ranking.py` -- `rrf_fuse`.
 
 ### 5. Delta-Aware Context Injection
 
-Sending an entire 400-line file to an LLM when only 8 lines changed is a 98% token waste. Mnemosyne tracks per-session chunk delivery state and computes diffs at both the file level and the chunk level.
+Sending an entire 400-line file to an LLM when only 8 lines changed is a 98% token waste. ContextRRF tracks per-session chunk delivery state and computes diffs at both the file level and the chunk level.
 
 **File-level delta detection**: `DeltaTracker.detect_changes()` walks the project directory, comparing on-disk mtime and content hashes against `FileRecord` entries in the database. It classifies every file as `added`, `modified`, or `deleted`. For modified files it computes a `difflib.unified_diff` between the indexed content and the current content.
 
@@ -1477,7 +1477,7 @@ Implementation: `delta.py` -- `DeltaTracker`.
 
 Copy-paste is ubiquitous in real codebases. Error-handling boilerplate, configuration loading patterns, and utility functions frequently appear in multiple files with minor or no variation. Without deduplication, the index balloons and identical content competes with itself in retrieval rankings.
 
-Mnemosyne applies **content-addressed storage** at the chunk level:
+ContextRRF applies **content-addressed storage** at the chunk level:
 
 1. Each chunk's text is **whitespace-normalized** (CRLF -> LF, trailing whitespace stripped per line) before hashing. This ensures that the same logical content with different line-ending conventions produces the same hash -- critical for cross-platform teams.
 
@@ -1511,11 +1511,11 @@ Tested with Claude Opus 4.6 (1M context):
 | **Compression** | 111K tokens indexed, 8K delivered (**99% reduction**) | 40-70% chunk-level compression |
 | **Query latency** | <500ms median cold, <200ms daemon | <500ms median cold |
 
-The pattern: on large repos, Mnemosyne saves 70%+ of tokens with no quality loss. On small repos, it matches baseline speed and quality. It never makes the answer worse.
+The pattern: on large repos, ContextRRF saves 70%+ of tokens with no quality loss. On small repos, it matches baseline speed and quality. It never makes the answer worse.
 
 ### Complex Domain Query (MEAT Detection Pipeline)
 
-| Metric | Mnemosyne | Baseline | Improvement |
+| Metric | ContextRRF | Baseline | Improvement |
 |---|---|---|---|
 | Tool calls | 1 | 13 | **-92%** |
 | Wall-clock time | 1.2s | 72s | **-98%** |
@@ -1569,13 +1569,13 @@ Incremental re-ingest of an unchanged project (Bloom + mtime check): **< 50ms** 
 | Bloom filter (100K capacity) | ~180 KB |
 | **Total** | **~10-30 MB** |
 
-Mnemosyne is suitable for use in resource-constrained environments, embedded agent runtimes, and CI pipelines.
+ContextRRF is suitable for use in resource-constrained environments, embedded agent runtimes, and CI pipelines.
 
 ---
 
 ## Technical Stack
 
-Mnemosyne is built entirely on the **Python 3.11+ standard library**. No external packages are required at runtime. The optional `onnxruntime` dependency is reserved for future dense embedding support.
+ContextRRF is built entirely on the **Python 3.11+ standard library**. No external packages are required at runtime. The optional `onnxruntime` dependency is reserved for future dense embedding support.
 
 | Component | Implementation |
 |---|---|
@@ -1598,7 +1598,7 @@ Mnemosyne is built entirely on the **Python 3.11+ standard library**. No externa
 
 The zero-dependency design is a deliberate constraint, not an oversight. It means:
 
-- **Installation is one command** -- `pip install mnemosyne-engine` with no conflict resolution.
+- **Installation is one command** -- `pip install contextrrf-engine` with no conflict resolution.
 - **Deployment is trivial** -- copy the directory, run Python.
 - **Security surface is minimal** -- no third-party supply chain to audit.
 - **Compatibility is guaranteed** -- any Python 3.11+ environment works.
@@ -1607,7 +1607,7 @@ The zero-dependency design is a deliberate constraint, not an oversight. It mean
 
 ## File Structure
 
-The `mnemosyne/` package contains 35+ modules across 3 sub-packages.
+The `contextrrf/` package contains 35+ modules across 3 sub-packages.
 
 ### Core Domain
 
@@ -1676,7 +1676,7 @@ The `mnemosyne/` package contains 35+ modules across 3 sub-packages.
 | `audit.py` | Append-only JSON-lines audit log: `log()`, `read()`. |
 | `daemon.py` | JSON-RPC daemon: Unix socket server, warm-start components, `start`/`stop`/`status` lifecycle. |
 | `cli.py` | Full CLI with `argparse`: `init`, `ingest`, `query`, `stats`, `compress`, `cache`, `delta`, `audit`, `analytics`, `gc`, `daemon` commands. |
-| `__main__.py` | `python -m mnemosyne` entry point. |
+| `__main__.py` | `python -m contextrrf` entry point. |
 | `__init__.py` | Package metadata: `__version__`, `__package_name__`. |
 
 ### Tests and Benchmarks
@@ -1703,17 +1703,17 @@ The `mnemosyne/` package contains 35+ modules across 3 sub-packages.
 
 ### Completed in v1.0.0
 
-- **Standalone CLI** -- Mnemosyne is a CLI-only tool by design. No MCP server, no protocol bridges. Consumers use `mnemosyne query/ingest/stats` commands or the Python API directly.
-- **JSON-RPC Daemon Mode** -- `mnemosyne daemon start/stop/status` runs a persistent Unix-domain-socket server keeping SQLite, TF-IDF, analytics, and prefetcher warm. Eliminates cold-start overhead for high-throughput workloads.
+- **Standalone CLI** -- ContextRRF is a CLI-only tool by design. No MCP server, no protocol bridges. Consumers use `contextrrf query/ingest/stats` commands or the Python API directly.
+- **JSON-RPC Daemon Mode** -- `contextrrf daemon start/stop/status` runs a persistent Unix-domain-socket server keeping SQLite, TF-IDF, analytics, and prefetcher warm. Eliminates cold-start overhead for high-throughput workloads.
 - **Multi-Language Structural Chunking** -- Go, C#, Rust, Java, and Kotlin now get brace-based structural chunking with symbol extraction via a shared `BraceChunker` base class, without requiring Tree-sitter.
 - **Staleness Detection** -- `QueryResult.is_stale` and `stale_reason` fields; formatter shows `[STALE]` markers.
-- **Bloom Filter Rebuild on GC** -- `mnemosyne gc` rebuilds the Bloom filter from surviving entries.
+- **Bloom Filter Rebuild on GC** -- `contextrrf gc` rebuilds the Bloom filter from surviving entries.
 - **SQLite Hardening** -- `busy_timeout=5000`, advisory file lock for write serialization.
 - **Tokenizer Version Tracking** -- Detects index/tokenizer version mismatch; warns and blocks stale searches.
 - **Compression Safety Net** -- Control flow lines preserved, 70% max prune ratio, strict mode for symbol chunks.
-- **Analytics CLI** -- `mnemosyne analytics` shows precision-at-k from feedback events and top-used chunks.
+- **Analytics CLI** -- `contextrrf analytics` shows precision-at-k from feedback events and top-used chunks.
 - **Benchmark Suite** -- Multi-project runner with chunk-level precision measurement.
-- **PyPI Package** -- `pip install mnemosyne-engine` (import name remains `mnemosyne`).
+- **PyPI Package** -- `pip install contextrrf-engine` (import name remains `contextrrf`).
 - **ALGORITHMS.md** -- Full algorithm documentation with paper references.
 
 ### Planned

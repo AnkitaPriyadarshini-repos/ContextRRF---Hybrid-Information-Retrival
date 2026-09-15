@@ -1,4 +1,4 @@
-# Mnemosyne -- Precision Tuning Guide
+# ContextRRF -- Precision Tuning Guide
 
 ## Version 0.2.0 -- Updated 2026-03-22
 
@@ -8,12 +8,12 @@
 
 ```bash
 # Full reset -- delete everything and start fresh
-rm -rf .mnemosyne
-python3 -m mnemosyne init
-python3 -m mnemosyne ingest
+rm -rf .contextrrf
+python3 -m contextrrf init
+python3 -m contextrrf ingest
 
 # Or re-ingest from scratch (purges stale files automatically)
-python3 -m mnemosyne ingest --full
+python3 -m contextrrf ingest --full
 ```
 
 The `--full` flag now purges file records for files that no longer match
@@ -53,7 +53,7 @@ codebases. Tune only when benchmark data shows a specific gap.
 
 ### 1. Exclude non-source directories (biggest win)
 
-Edit `.mnemosyne/config.toml`:
+Edit `.contextrrf/config.toml`:
 
 ```toml
 [general]
@@ -67,7 +67,7 @@ the config merge uses list union.
 
 ### 2. Use language-aware chunking
 
-Mnemosyne v0.2.0 includes dedicated chunkers:
+ContextRRF v0.2.0 includes dedicated chunkers:
 
 | Language | Chunker | Symbol extraction |
 |---|---|---|
@@ -106,10 +106,10 @@ usage_weight = 0.2
 
 ```bash
 # Tight budget = fewer results, higher precision
-python3 -m mnemosyne query "auth middleware" --budget 2000
+python3 -m contextrrf query "auth middleware" --budget 2000
 
 # Generous budget = more results, higher recall
-python3 -m mnemosyne query "auth middleware" --budget 12000
+python3 -m contextrrf query "auth middleware" --budget 12000
 ```
 
 The default is 8000 tokens. For single-function lookups, 2000 is enough.
@@ -189,11 +189,11 @@ ignore_patterns = ["generated/", "vendor/", "*.generated.ts"]
 Run the built-in benchmark to measure retrieval quality:
 
 ```bash
-python3 -m mnemosyne.tests.benchmark --project-root /path/to/project --budget 4000
+python3 -m contextrrf.tests.benchmark --project-root /path/to/project --budget 4000
 ```
 
 The benchmark reports:
-- **Token reduction** -- raw tokens vs. mnemosyne tokens per query
+- **Token reduction** -- raw tokens vs. contextrrf tokens per query
 - **Retrieval precision** -- fraction of retrieved files that are ground truth
 - **Retrieval recall** -- fraction of ground truth files that are retrieved
 - **Compression ratios** -- per-file compression effectiveness
@@ -224,4 +224,4 @@ The benchmark reports:
 | HTML/legal pages outrank source code | Prose matches query keywords | Automatic 0.85 HTML penalty in v0.2.0 |
 | Utility files never found | No keyword overlap | Import graph auto-injects connected files |
 | `package-lock.json` indexed | Missing from ignore list | Now in hardened defaults |
-| Query returns 0 results | Index empty or stale | Run `python3 -m mnemosyne ingest --full` |
+| Query returns 0 results | Index empty or stale | Run `python3 -m contextrrf ingest --full` |

@@ -1,6 +1,6 @@
-# Mnemosyne Algorithm Reference
+# ContextRRF Algorithm Reference
 
-Technical documentation of every custom algorithm in the Mnemosyne retrieval system.
+Technical documentation of every custom algorithm in the ContextRRF retrieval system.
 Formulas and parameters are extracted directly from source code.
 
 ---
@@ -9,7 +9,7 @@ Formulas and parameters are extracted directly from source code.
 
 **Source:** `retrieval.py` (`_bm25_search`, `_escape_fts5`)
 
-Mnemosyne delegates lexical scoring to SQLite FTS5's built-in BM25 implementation,
+ContextRRF delegates lexical scoring to SQLite FTS5's built-in BM25 implementation,
 configured with the Porter stemmer and Unicode61 tokenizer.
 
 **Query preprocessing:**

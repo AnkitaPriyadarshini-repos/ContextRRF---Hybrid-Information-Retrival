@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Mnemosyne are documented in this file.
+All notable changes to ContextRRF are documented in this file.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -10,7 +10,7 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 - Document ingestion (Tier 0) -- extract and index PDFs, DOCX, CSV, and
   plaintext (.log, .cfg, .ini, .conf, .rst, .xml). PDF requires optional
-  `mnemosyne-engine[pdf]` extra (pypdf, pure Python, BSD). All other
+  `contextrrf-engine[pdf]` extra (pypdf, pure Python, BSD). All other
   extractors use stdlib only. Zero-dep core preserved.
 - Partitioned document index -- documents stored in isolated tables
   (doc_chunks, doc_chunks_fts, doc_sparse_embeddings, doc_vocabulary) within
@@ -26,7 +26,7 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - One-time upgrade hint -- on first query or ingest after schema migration,
   a stderr message reminds users about the new `--all` and `--docs` flags.
   Fires once, then clears. Fresh installs are not affected.
-- Progress bar on `mnemosyne ingest` with live counter and file path display.
+- Progress bar on `contextrrf ingest` with live counter and file path display.
 - Document partition benchmark -- 18-test regression gate covering document
   retrieval, schema lookup, cross-partition queries, and partition isolation.
 
@@ -50,14 +50,14 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   doc_sparse_embeddings, doc_vocabulary tables.
 
 ### Upgrade notes
-- Run `mnemosyne ingest --full` after upgrading to populate document
+- Run `contextrrf ingest --full` after upgrading to populate document
   partitions and vocabulary. Existing code indexes are preserved.
-- Queries that previously found .md files via default `mnemosyne query` must
+- Queries that previously found .md files via default `contextrrf query` must
   now use `--all` or `--docs`.
 
 ---
 
-### mnemosyne-mcp [0.2.0]
+### contextrrf-mcp [0.2.0]
 
 ### Added
 - `search_docs` tool -- document-only MCP search for LLM agents.
@@ -77,7 +77,7 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
-### mnemosyne-ollama [0.1.1]
+### contextrrf-ollama [0.1.1]
 
 ### Added
 - Partition visibility in verbose mode -- `-v` output shows code/docs chunk
@@ -101,8 +101,8 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   render identically on GitHub and PyPI. Diagrams stored in docs/assets/diagrams/.
 
 ### Added
-- mnemosyne-ollama (v0.1.0) -- lightweight MCP host that bridges Ollama's
-  tool-calling API to mnemosyne-mcp. Zero new dependencies beyond mnemosyne-mcp.
+- contextrrf-ollama (v0.1.0) -- lightweight MCP host that bridges Ollama's
+  tool-calling API to contextrrf-mcp. Zero new dependencies beyond contextrrf-mcp.
   Auto-detects tool-capable models (Gemma 3/4, Llama 3.x/4, Qwen 2.5/3, Phi-4,
   Mistral-Nemo, Command-R). Single-shot and interactive CLI modes. ~210 lines of
   implementation code. Includes OIDC publish workflow (publish-ollama.yml).
@@ -126,14 +126,14 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [1.0.2] - 2026-04-02
 
 ### Fixed
-- Self-ingestion bug -- mnemosyne's own source package (`mnemosyne/`) was not
+- Self-ingestion bug -- contextrrf's own source package (`contextrrf/`) was not
   excluded from default `ignore_patterns`, causing the engine to index itself
   when run from the repo root or when the package directory existed in a project.
-  Added `"mnemosyne"` to the default ignore list alongside `.mnemosyne`.
+  Added `"contextrrf"` to the default ignore list alongside `.contextrrf`.
 - Benchmark suite root path -- `httpx.json` had an empty `root` field that
-  resolved to the mnemosyne package directory instead of the httpx corpus.
+  resolved to the contextrrf package directory instead of the httpx corpus.
   Updated to use the same `/tmp` clone path as `httpx_holdback.json`.
-- Removed manual `"mnemosyne"` exclusion workaround from `benchmark_suite.py`
+- Removed manual `"contextrrf"` exclusion workaround from `benchmark_suite.py`
   `_setup_mnemosyne()` -- no longer needed with the default ignore fix.
 
 ### Changed
@@ -142,7 +142,7 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   and use cases. Detailed documentation moved to REFERENCE.md.
 - Added REFERENCE.md -- full CLI reference, configuration, architecture,
   key innovations, and integration guides (content preserved from original README).
-- Replaced `pipeline.png` with `mnemosyne.png` as centered repo logo.
+- Replaced `pipeline.png` with `contextrrf.png` as centered repo logo.
 
 ### Benchmark results (post-fix)
 - httpx (6 questions): File recall 0% -> **80.6%** (was indexing wrong project)
@@ -170,12 +170,12 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [0.4.0] - 2026-03-29
 
 ### Added
-- `mnemosyne health` command -- reports index age, file/chunk/token counts,
+- `contextrrf health` command -- reports index age, file/chunk/token counts,
   vocabulary size, stale files, FTS5 integrity, tokenizer hash, and daemon
   status. `--json` flag for programmatic monitoring.
 - `--log-format` global flag (text/json) for structured logging on all commands.
 - `--log-level` global flag (DEBUG/INFO/WARNING/ERROR) for log verbosity.
-- `mnemosyne benchmark` command for running retrieval-quality benchmarks
+- `contextrrf benchmark` command for running retrieval-quality benchmarks
   against any corpus with JSON question sets.
 - httpx 0.28.1 benchmark regression gate (5 assertions, `@pytest.mark.benchmark`).
 - Retrieval metrics: `hit_at_3`, `relevant_at_5`, `mrr_at_10` in BenchmarkSuite.
@@ -183,7 +183,7 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   definitions receive 4x boost when PascalCase/TitleCase query detected.
 - Hybrid file aggregation in `_file_level_filter` -- max + 0.1*sum prevents
   files with many weak chunks from volume-dominating over precise matches.
-- Ingest directory walk -- `mnemosyne ingest src/` now expands directories
+- Ingest directory walk -- `contextrrf ingest src/` now expands directories
   instead of silently dropping them.
 - Path containment validation -- ingest CLI rejects paths outside project root,
   resolves symlinks with `os.path.realpath()`.
@@ -211,7 +211,7 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.3.0] - 2026-03-28
 
-Initial public release on PyPI as `mnemosyne-engine`.
+Initial public release on PyPI as `contextrrf-engine`.
 
 - Hybrid retrieval: BM25 (FTS5) + TF-IDF + usage frequency + symbol search
 - Reciprocal Rank Fusion across all signals
@@ -221,10 +221,10 @@ Initial public release on PyPI as `mnemosyne-engine`.
 - Daemon mode with Unix socket RPC
 - Zero runtime dependencies
 
-[1.1.0]: https://github.com/castnettech/mnemosyne/compare/v1.0.5...v1.1.0
-[1.0.5]: https://github.com/castnettech/mnemosyne/compare/v1.0.4...v1.0.5
-[1.0.4]: https://github.com/castnettech/mnemosyne/compare/v1.0.2...v1.0.4
-[1.0.2]: https://github.com/castnettech/mnemosyne/compare/v1.0.0...v1.0.2
-[1.0.0]: https://github.com/castnettech/mnemosyne/compare/v0.4.0...v1.0.0
-[0.4.0]: https://github.com/castnettech/mnemosyne/compare/v0.3.0...v0.4.0
-[0.3.0]: https://github.com/castnettech/mnemosyne/releases/tag/v0.3.0
+[1.1.0]: https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival/compare/v1.0.5...v1.1.0
+[1.0.5]: https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival/compare/v1.0.4...v1.0.5
+[1.0.4]: https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival/compare/v1.0.2...v1.0.4
+[1.0.2]: https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival/compare/v1.0.0...v1.0.2
+[1.0.0]: https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival/compare/v0.4.0...v1.0.0
+[0.4.0]: https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival/releases/tag/v0.3.0
