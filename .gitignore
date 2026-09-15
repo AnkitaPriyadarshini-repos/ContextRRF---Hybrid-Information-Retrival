@@ -51,6 +51,7 @@ CLAUDE.md
 
 # -- Docs --
 docs/
+!docs/current_rrf_behavior.md
 !docs/benchmark_meat_detection_query.md
 !docs/assets/
 !docs/assets/mnemosyne.png

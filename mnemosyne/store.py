@@ -18,7 +18,10 @@ Design notes:
 
 from __future__ import annotations
 
-import fcntl
+try:
+    import fcntl
+except ImportError:
+    fcntl = None  # type: ignore[assignment]
 import json
 import sqlite3
 from contextlib import contextmanager
@@ -122,7 +125,7 @@ class Store:
         The lock file lives alongside the database (``<db_dir>/mnemosyne.lock``).
         For in-memory databases the lock is a no-op so that tests are unaffected.
         """
-        if self._lock_path is None:
+        if self._lock_path is None or fcntl is None:
             yield
             return
         # Ensure the lock file exists.

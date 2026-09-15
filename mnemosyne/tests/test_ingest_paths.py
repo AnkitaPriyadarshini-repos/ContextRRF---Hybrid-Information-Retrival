@@ -93,7 +93,10 @@ class TestResolvePathsContainment(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             ingester = _build_ingester(tmp)
             symlink_path = os.path.join(tmp, "escape_link")
-            os.symlink("/tmp", symlink_path)
+            try:
+                os.symlink(tmp, symlink_path)
+            except OSError:
+                self.skipTest("Symlinks not supported or permitted without admin privileges on Windows")
             with self.assertRaises(ValueError) as ctx:
                 ingester._resolve_paths([symlink_path])
             self.assertIn("outside project root", str(ctx.exception))

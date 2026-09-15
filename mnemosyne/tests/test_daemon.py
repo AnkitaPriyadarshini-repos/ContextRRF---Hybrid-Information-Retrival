@@ -47,6 +47,7 @@ def verify_password(password: str, hashed: str) -> bool:
 '''
 
 
+@unittest.skipUnless(hasattr(socket, "AF_UNIX"), "AF_UNIX sockets not supported on Windows")
 class _DaemonTestBase(unittest.TestCase):
     """Shared setup: temp project dir, schema, sample files, daemon instance."""
 
