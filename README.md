@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/castnettech/mnemosyne/main/docs/assets/mnemosyne.png" alt="ContextRRF" width="400">
+  <img src="https://raw.githubusercontent.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival/main/docs/assets/mnemosyne.png" alt="ContextRRF" width="400">
 </p>
 
 <h1 align="center">ContextRRF</h1>
@@ -18,7 +18,7 @@
 ---
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/castnettech/mnemosyne/main/docs/assets/diagrams/mnemosyne-ecosystem.gif" alt="ContextRRF Ecosystem -- Local-first code intelligence" width="800">
+  <img src="https://raw.githubusercontent.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival/main/docs/assets/diagrams/mnemosyne-ecosystem.gif" alt="ContextRRF Ecosystem -- Local-first code intelligence" width="800">
 </p>
 
 **ContextRRF** indexes codebases and documents into a local SQLite store, scores every chunk with a multi-signal hybrid retriever, fuses rankings with **Reciprocal Rank Fusion (RRF)**, compresses results with AST awareness, and delivers token-budgeted context optimized for LLMs. Supports source code (Python, JS/TS, Go, Rust, C#, Java, Kotlin), documents (PDF, DOCX, CSV, plaintext), and database schemas (SQL DDL, JSON snapshots, SQLite introspection). It runs entirely locally -- zero API keys, zero cloud, zero runtime dependencies beyond standard Python 3.10+.

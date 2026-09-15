@@ -112,7 +112,7 @@ Everything runs locally. No API keys, no cloud, no data leaves your machine.
 
 ## Configuration
 
-ContextRRF search settings are configured via `.contextrrf/config.toml` in your project root (created on first index). See the [ContextRRF documentation](https://github.com/castnettech/contextrrf#readme) for details.
+ContextRRF search settings are configured via `.contextrrf/config.toml` in your project root (created on first index). See the [ContextRRF documentation](https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival#readme) for details.
 
 The `--budget` flag overrides the configured default per query.
 

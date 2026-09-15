@@ -1,6 +1,6 @@
 # contextrrf-mcp
 
-MCP server for [ContextRRF](https://github.com/castnettech/contextrrf) -- a 6-signal hybrid retrieval engine for code, documents, and database schemas. Reduces LLM context waste by 73%.
+MCP server for [ContextRRF](https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival) -- a 6-signal hybrid retrieval engine for code, documents, and database schemas. Reduces LLM context waste by 73%.
 
 For the full reference, see [MCP.md](../MCP.md) in the repository root.
 

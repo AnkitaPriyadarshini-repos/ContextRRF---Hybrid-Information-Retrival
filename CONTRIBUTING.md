@@ -5,7 +5,7 @@ Thank you for your interest in contributing.
 ## Setup
 
 ```bash
-git clone https://github.com/castnettech/contextrrf.git
+git clone https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival.git
 cd contextrrf
 pip install -e ".[dev]"
 pytest contextrrf/tests/
@@ -26,7 +26,7 @@ pytest contextrrf/tests/
 
 ## Reporting Issues
 
-Open an issue at https://github.com/castnettech/contextrrf/issues with:
+Open an issue at https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival/issues with:
 - What you expected
 - What happened
 - Steps to reproduce

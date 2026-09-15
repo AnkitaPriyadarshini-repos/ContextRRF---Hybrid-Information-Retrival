@@ -28,9 +28,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/castnettech/contextrrf"
+Homepage = "https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival"
 Documentation = "https://castnettechnology.com/blog/contextrrf-context-engine-benchmark"
-Repository = "https://github.com/castnettech/contextrrf"
+Repository = "https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival"
 
 [project.scripts]
 contextrrf-mcp = "mnemosyne_mcp.server:run"

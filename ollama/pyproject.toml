@@ -28,8 +28,8 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://castnettechnology.com"
-Repository = "https://github.com/castnettech/contextrrf"
-Issues = "https://github.com/castnettech/contextrrf/issues"
+Repository = "https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival"
+Issues = "https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival/issues"
 
 [project.scripts]
 contextrrf-ollama = "contextrrf_ollama.cli:main"

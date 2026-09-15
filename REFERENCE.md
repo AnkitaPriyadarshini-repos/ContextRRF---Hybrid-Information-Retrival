@@ -33,7 +33,7 @@ Complete CLI reference, configuration options, architecture overview, and integr
 pip install contextrrf-engine
 
 # Or install from source (for development)
-git clone https://github.com/castnettech/contextrrf.git
+git clone https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival.git
 cd contextrrf
 pip install -e .
 ```
@@ -803,7 +803,7 @@ Complete CLI reference, configuration options, architecture overview, and integr
 pip install contextrrf-engine
 
 # Or install from source (for development)
-git clone https://github.com/castnettech/contextrrf.git
+git clone https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival.git
 cd contextrrf
 pip install -e .
 ```

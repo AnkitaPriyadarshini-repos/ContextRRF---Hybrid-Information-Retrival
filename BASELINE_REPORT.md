@@ -1,7 +1,7 @@
 # ContextRRF Baseline Report
 
 ## Repository
-- **Upstream URL**: [https://github.com/castnettech/contextrrf](https://github.com/castnettech/contextrrf)
+- **Upstream URL**: [https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival](https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival)
 - **Git Branch**: `baseline/contextrrf-original`
 - **Target Evolution**: `ContextRRF`
 
