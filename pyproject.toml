@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "contextrrf-engine"
+version = "1.1.0"
+description = "LLM Context Compression and Retrieval Engine -- zero dependencies, sub-100ms queries, document + code ingestion"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "AGPL-3.0-or-later"
+authors = [{name = "Cast Rock Innovation L.L.C."}]
+keywords = ["llm", "context", "compression", "retrieval", "token", "contextrrf", "code-search", "bm25", "tfidf"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Text Processing :: Indexing",
+    "Typing :: Typed",
+]
+
+[project.urls]
+Homepage = "https://castnettechnology.com"
+Repository = "https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival"
+Documentation = "https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival#readme"
+Issues = "https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival/issues"
+
+[project.scripts]
+contextrrf = "contextrrf.cli:main"
+
+[project.optional-dependencies]
+pdf = ["pypdf>=4.0"]
+dense = ["onnxruntime>=1.17"]
+dev = ["pytest>=8.3"]
+
+[tool.setuptools.packages.find]
+include = ["contextrrf*"]
+
+[tool.pytest.ini_options]
+testpaths = ["contextrrf/tests"]
+markers = [
+    "benchmark: Httpx regression benchmark (requires network for first run)",
+]

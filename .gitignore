@@ -1,0 +1,58 @@
+# -- ContextRRF data (user-specific runtime, never committed) --
+.contextrrf/
+.mnemosyne/
+bloom.bin
+*.db
+*.db-wal
+*.db-shm
+contextrrf.lock
+mnemosyne.lock
+
+# -- Python --
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# -- Virtual environments --
+.venv/
+venv/
+env/
+
+# -- Testing --
+.pytest_cache/
+.coverage
+htmlcov/
+
+# -- IDE --
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# -- Secrets / credentials --
+.env
+*.pem
+*.key
+*.p12
+*.secret
+credentials*
+id_rsa*
+id_ed25519*
+
+# -- OS artifacts --
+.DS_Store
+Thumbs.db
+
+# -- Claude Code workspace --
+.claude/
+CLAUDE.md
+
+# -- Docs --
+# docs/ directory tracked for ContextRRF Academic Documentation Suite
+
+# -- Holdback test data (never committed -- validation-only) --
+mnemosyne/tests/benchmark_questions/httpx_holdback.json

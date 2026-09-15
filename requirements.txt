@@ -1,0 +1,3 @@
+# ContextRRF -- Runtime Dependencies
+# v1.0.4: Zero runtime dependencies (stdlib only)
+# Optional: pip install contextrrf-engine[dense] for semantic embeddings (onnxruntime)

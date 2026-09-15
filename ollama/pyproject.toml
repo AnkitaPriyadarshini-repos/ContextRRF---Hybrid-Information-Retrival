@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "contextrrf-ollama"
+version = "0.1.1"
+description = "Ask your codebase questions using Ollama and ContextRRF -- zero-config local code search"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "AGPL-3.0-or-later"
+authors = [{name = "Cast Rock Innovation L.L.C."}]
+keywords = ["contextrrf", "ollama", "mcp", "code-search", "local-llm", "rag", "tool-calling"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Text Processing :: Indexing",
+]
+
+dependencies = [
+    "contextrrf-mcp>=0.1.0",
+]
+
+[project.urls]
+Homepage = "https://castnettechnology.com"
+Repository = "https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival"
+Issues = "https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival/issues"
+
+[project.scripts]
+contextrrf-ollama = "contextrrf_ollama.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

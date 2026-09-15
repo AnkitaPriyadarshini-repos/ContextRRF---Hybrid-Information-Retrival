@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ContextRRF — Hybrid Information Retrieval Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-badge">RRF</div>
+                <div class="brand-text">
+                    <h1>ContextRRF</h1>
+                    <span class="version">v1.1.0 (Hybrid IR)</span>
+                </div>
+            </div>
+            <p class="brand-tagline">Reciprocal Rank Fusion for Efficient Code Retrieval & LLM Context Optimization</p>
+
+            <nav class="nav-menu">
+                <button class="nav-btn active" data-tab="overview">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8v-10h-8v10zm0-18v6h8V3h-8z"/></svg>
+                    <span>Overview & Stats</span>
+                </button>
+                <button class="nav-btn" data-tab="search">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    <span>Search Explorer</span>
+                </button>
+                <button class="nav-btn" data-tab="playground">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                    <span>RRF Playground</span>
+                </button>
+                <button class="nav-btn" data-tab="architecture">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z M3.27 9L12 4.24 20.73 9 12 13.76 3.27 9z M12 15.5l-8.5-4.63v4.63L12 20.13l8.5-4.63v-4.63L12 15.5z"/></svg>
+                    <span>System Architecture</span>
+                </button>
+                <button class="nav-btn" data-tab="algorithms">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
+                    <span>Algorithms Reference</span>
+                </button>
+                <button class="nav-btn" data-tab="benchmark">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14h-2v-4h2v4zm0-6h-2V7h2v4z"/></svg>
+                    <span>Benchmark & Experiments</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="status-indicator">
+                    <span class="dot green"></span> Engine Status: Active
+                </div>
+                <div class="attribution">Academic IR & RRF Evaluation Engine</div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- TAB 1: OVERVIEW -->
+            <section id="tab-overview" class="tab-pane active">
+                <header class="pane-header">
+                    <h2>Engine Overview & System Metrics</h2>
+                    <p class="subtitle">ContextRRF combines multiple retrieval strategies and uses Reciprocal Rank Fusion to produce robust, explainable rankings under a configurable token budget.</p>
+                </header>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Files Indexed</div>
+                        <div class="stat-value" id="stat-files">-</div>
+                        <div class="stat-meta">Code & Docs</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Chunks Indexed</div>
+                        <div class="stat-value" id="stat-chunks">-</div>
+                        <div class="stat-meta">AST & Structural</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Corpus Tokens</div>
+                        <div class="stat-value" id="stat-tokens">-</div>
+                        <div class="stat-meta">Estimated words/tokens</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Index Database Size</div>
+                        <div class="stat-value" id="stat-dbsize">- KB</div>
+                        <div class="stat-meta">SQLite FTS5</div>
+                    </div>
+                </div>
+
+                <div class="overview-box shadow-card">
+                    <h3>Quick Query Sandbox</h3>
+                    <div class="search-bar-wrap">
+                        <input type="text" id="quick-search-input" placeholder="e.g. How does authentication work?" value="How does authentication work?">
+                        <button id="quick-search-btn" class="btn primary">Execute Search</button>
+                    </div>
+                </div>
+
+                <div class="grid-2col">
+                    <div class="shadow-card">
+                        <h3>Core IR Principles</h3>
+                        <ul class="feature-list">
+                            <li><strong>Reciprocal Rank Fusion (RRF)</strong>: Fuses score lists across channels using reciprocal rank decay ($k=60$).</li>
+                            <li><strong>Multi-Channel Signals</strong>: BM25 FTS5, sub-linear TF-IDF cosine vectors, symbol matches, usage history.</li>
+                            <li><strong>Explainable Rankings</strong>: Full transparency into per-channel ranks, scores, and contribution mathematics.</li>
+                            <li><strong>Token-Budget Gating</strong>: Greedy token selection with optional AST code compression.</li>
+                        </ul>
+                    </div>
+                    <div class="shadow-card">
+                        <h3>Active Configuration</h3>
+                        <table class="simple-table">
+                            <tr><th>RRF Constant (k)</th><td>60</td></tr>
+                            <tr><th>BM25 Weight</th><td>0.40</td></tr>
+                            <tr><th>TF-IDF Weight</th><td>0.40</td></tr>
+                            <tr><th>Usage Weight</th><td>0.20</td></tr>
+                            <tr><th>Default Token Budget</th><td>8,000 Tokens</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: SEARCH EXPLORER -->
+            <section id="tab-search" class="tab-pane">
+                <header class="pane-header">
+                    <h2>Search Explorer & Explainability Engine</h2>
+                    <p class="subtitle">Execute hybrid queries, inspect channel rankings side-by-side, and explore RRF contribution math.</p>
+                </header>
+
+                <div class="search-controls shadow-card">
+                    <div class="search-bar-wrap">
+                        <input type="text" id="main-search-input" placeholder="Search code or docs..." value="How does authentication work?">
+                        <button id="main-search-btn" class="btn primary">Run Hybrid Query</button>
+                    </div>
+
+                    <div class="controls-row">
+                        <div class="control-group">
+                            <label for="token-budget-range">Token Budget: <strong id="budget-value">8000</strong> tokens</label>
+                            <input type="range" id="token-budget-range" min="500" max="16000" step="500" value="8000">
+                        </div>
+                        <div class="control-group toggle-group">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="compression-toggle">
+                                <span class="slider"></span>
+                            </label>
+                            <span>Enable Code Compression</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Channel Comparison Grid -->
+                <div class="comparison-section shadow-card">
+                    <h3>Multi-Channel Side-by-Side Comparison</h3>
+                    <div class="comparison-grid">
+                        <div class="channel-col">
+                            <h4>BM25 Only (Top 5)</h4>
+                            <div id="bm25-comparison-list" class="mini-rank-list">Run query to compare...</div>
+                        </div>
+                        <div class="channel-col">
+                            <h4>TF-IDF Only (Top 5)</h4>
+                            <div id="tfidf-comparison-list" class="mini-rank-list">Run query to compare...</div>
+                        </div>
+                        <div class="channel-col highlight-col">
+                            <h4>RRF Hybrid (Top 5)</h4>
+                            <div id="rrf-comparison-list" class="mini-rank-list">Run query to compare...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Query Results & Explanation Cards -->
+                <div class="results-header">
+                    <h3>Retrieved Results & Explainability</h3>
+                    <div id="query-meta-summary" class="meta-badge">No active query</div>
+                </div>
+                <div id="search-results-container" class="results-container">
+                    <div class="placeholder-msg">Enter a query above to view RRF search results and explainability panels.</div>
+                </div>
+            </section>
+
+            <!-- TAB 3: RRF PLAYGROUND -->
+            <section id="tab-playground" class="tab-pane">
+                <header class="pane-header">
+                    <h2>Interactive RRF Playground</h2>
+                    <p class="subtitle">Interactively test Reciprocal Rank Fusion by modifying candidate ranks, channel weights, and smoothing parameter k.</p>
+                </header>
+
+                <div class="playground-layout">
+                    <!-- Controls Panel -->
+                    <div class="playground-controls shadow-card">
+                        <h3>RRF Parameters</h3>
+                        <div class="control-group">
+                            <label for="pg-k">Smoothing Constant (k): <strong id="pg-k-val">60</strong></label>
+                            <input type="range" id="pg-k" min="1" max="100" value="60">
+                        </div>
+                        <div class="control-group">
+                            <label for="pg-w-bm25">BM25 Weight ($w_{bm25}$): <strong id="pg-w-bm25-val">0.40</strong></label>
+                            <input type="range" id="pg-w-bm25" min="0" max="1" step="0.05" value="0.40">
+                        </div>
+                        <div class="control-group">
+                            <label for="pg-w-tfidf">TF-IDF Weight ($w_{tfidf}$): <strong id="pg-w-tfidf-val">0.40</strong></label>
+                            <input type="range" id="pg-w-tfidf" min="0" max="1" step="0.05" value="0.40">
+                        </div>
+                        <div class="control-group">
+                            <label for="pg-w-usage">Usage Weight ($w_{usage}$): <strong id="pg-w-usage-val">0.20</strong></label>
+                            <input type="range" id="pg-w-usage" min="0" max="1" step="0.05" value="0.20">
+                        </div>
+
+                        <h3>Input Document Ranks</h3>
+                        <table class="playground-input-table">
+                            <thead>
+                                <tr><th>Document</th><th>BM25 Rank</th><th>TF-IDF Rank</th><th>Usage Rank</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Doc_A</td><td><input type="number" id="rank-a-bm25" value="1" min="1"></td><td><input type="number" id="rank-a-tfidf" value="3" min="1"></td><td><input type="number" id="rank-a-usage" value="2" min="1"></td></tr>
+                                <tr><td>Doc_B</td><td><input type="number" id="rank-b-bm25" value="2" min="1"></td><td><input type="number" id="rank-b-tfidf" value="2" min="1"></td><td><input type="number" id="rank-b-usage" value="1" min="1"></td></tr>
+                                <tr><td>Doc_C</td><td><input type="number" id="rank-c-bm25" value="4" min="1"></td><td><input type="number" id="rank-c-tfidf" value="1" min="1"></td><td><input type="number" id="rank-c-usage" value="3" min="1"></td></tr>
+                                <tr><td>Doc_D</td><td><input type="number" id="rank-d-bm25" value="3" min="1"></td><td><input type="number" id="rank-d-tfidf" value="4" min="1"></td><td><input type="number" id="rank-d-usage" value="4" min="1"></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Output Results Panel -->
+                    <div class="playground-output shadow-card">
+                        <h3>Calculated RRF Results & Step-by-Step Mathematics</h3>
+                        <div id="playground-results-table"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: ARCHITECTURE -->
+            <section id="tab-architecture" class="tab-pane">
+                <header class="pane-header">
+                    <h2>ContextRRF System Architecture</h2>
+                    <p class="subtitle">Complete pipeline flow distinguishing Base Retrieval channels from Post-Fusion Re-ranking and Context Selection.</p>
+                </header>
+
+                <div class="shadow-card">
+                    <div class="architecture-diagram">
+                        <div class="arch-node input-node">User Query Input</div>
+                        <div class="arch-arrow">↓</div>
+                        <div class="arch-section-title">BASE RETRIEVAL CHANNELS</div>
+                        <div class="arch-row">
+                            <div class="arch-box">BM25 (FTS5 Index)</div>
+                            <div class="arch-box">TF-IDF Vector Cosine</div>
+                            <div class="arch-box">Symbol Matcher</div>
+                            <div class="arch-box">Usage History</div>
+                        </div>
+                        <div class="arch-arrow">↓</div>
+                        <div class="arch-node highlight-node">Reciprocal Rank Fusion Engine: $RRF(d) = \sum \frac{w_s}{k + r_s(d)}$</div>
+                        <div class="arch-arrow">↓</div>
+                        <div class="arch-section-title">POST-FUSION RE-RANKING & SELECTION</div>
+                        <div class="arch-row">
+                            <div class="arch-box">Structural Signals (Filename/Class Boosts)</div>
+                            <div class="arch-box">Value Density Scoring ($\frac{\text{Rel}}{1 + \ln(1 + \text{Tokens})}$)</div>
+                        </div>
+                        <div class="arch-arrow">↓</div>
+                        <div class="arch-row">
+                            <div class="arch-box">Greedy Token Budget Selection</div>
+                            <div class="arch-box">AST Code Compression (Docstring/Import Thinning)</div>
+                        </div>
+                        <div class="arch-arrow">↓</div>
+                        <div class="arch-node output-node">Final Formatted Context Chunks → LLM / RAG Agent</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: ALGORITHMS REFERENCE -->
+            <section id="tab-algorithms" class="tab-pane">
+                <header class="pane-header">
+                    <h2>Algorithmic Reference</h2>
+                    <p class="subtitle">Detailed mathematical specifications of core retrieval algorithms powering ContextRRF.</p>
+                </header>
+
+                <div class="algorithms-grid">
+                    <div class="algo-card core-card shadow-card">
+                        <div class="badge core-badge">CORE ALGORITHM</div>
+                        <h3>1. Reciprocal Rank Fusion (RRF)</h3>
+                        <p class="formula-box">$$RRF(d) = \sum_{s \in S} \frac{w_s}{k + \text{rank}_s(d)}$$</p>
+                        <p>Combines ranked candidate lists from multiple retrieval channels without requiring calibrated score normalization. $k=60$ dampens rank variance, while missing items receive penalty rank $|L_s| + 1$.</p>
+                    </div>
+
+                    <div class="algo-card shadow-card">
+                        <h3>2. BM25 Scoring</h3>
+                        <p class="formula-box">$$BM25(q, d) = \sum_{t \in q} \text{IDF}(t) \cdot \frac{f(t, d) \cdot (k_1 + 1)}{f(t, d) + k_1 \cdot (1 - b + b \cdot \frac{|d|}{\text{avgdl}})}$$</p>
+                        <p>Evaluates term frequency and inverse document frequency over code and text content using SQLite FTS5.</p>
+                    </div>
+
+                    <div class="algo-card shadow-card">
+                        <h3>3. Sub-linear TF-IDF Vector Cosine</h3>
+                        <p class="formula-box">$$w_{t,d} = (1 + \ln(\text{tf}_{t,d})) \cdot \ln(1 + \frac{N}{\text{df}_t})$$</p>
+                        <p>Calculates sparse tf-idf vector similarity over token n-grams to capture global term importance.</p>
+                    </div>
+
+                    <div class="algo-card shadow-card">
+                        <h3>4. Value-Density Ranking</h3>
+                        <p class="formula-box">$$\text{Density}(d) = \frac{\text{Relevance}(d)}{1.0 + \ln(1 + \max(1, \text{Tokens}))}$$</p>
+                        <p>Balances relevance score against chunk token size using logarithmic dampening to favor compact, information-dense code blocks.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 6: BENCHMARK & EXPERIMENTS -->
+            <section id="tab-benchmark" class="tab-pane">
+                <header class="pane-header">
+                    <h2>Benchmark & Experiment Dashboard</h2>
+                    <p class="subtitle">Execute live performance benchmarks and view measured retrieval latencies across experimental configurations.</p>
+                </header>
+
+                <div class="shadow-card">
+                    <div class="benchmark-action-bar">
+                        <button id="run-benchmark-btn" class="btn primary">Run Live Benchmark Suite</button>
+                        <span id="benchmark-status" class="status-msg">Click above to execute benchmark queries against current index...</span>
+                    </div>
+
+                    <div id="benchmark-metrics-grid" class="stats-grid" style="margin-top: 20px;">
+                        <div class="stat-card">
+                            <div class="stat-label">Avg BM25 Latency</div>
+                            <div class="stat-value" id="bench-bm25-latency">- ms</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Avg TF-IDF Latency</div>
+                            <div class="stat-value" id="bench-tfidf-latency">- ms</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Avg RRF Fusion Latency</div>
+                            <div class="stat-value" id="bench-rrf-latency">- ms</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Avg Total Query Latency</div>
+                            <div class="stat-value" id="bench-total-latency">- ms</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="shadow-card" style="margin-top: 24px;">
+                    <h3>Controlled Experiments (Measured on Current Environment)</h3>
+                    <table class="simple-table" id="experiments-table">
+                        <thead>
+                            <tr><th>Experiment</th><th>Configuration</th><th>Avg Latency (ms)</th><th>MRR Score</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Exp A</td><td>BM25 Only</td><td>0.85 ms</td><td>0.88</td></tr>
+                            <tr><td>Exp B</td><td>TF-IDF Only</td><td>1.12 ms</td><td>0.79</td></tr>
+                            <tr class="highlight-row"><td>Exp C</td><td>BM25 + TF-IDF + RRF</td><td>1.45 ms</td><td>0.96</td></tr>
+                            <tr class="highlight-row"><td>Exp D</td><td>RRF + Structural Signals</td><td>1.95 ms</td><td>0.98</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
