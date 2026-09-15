@@ -10,9 +10,9 @@
 
 <p align="center">
   <a href="https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival"><img src="https://img.shields.io/badge/pypi-v1.1.0-blue" alt="PyPI"></a>
-  <a href="https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival/blob/contextRRF/development/LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-green" alt="License"></a>
+  <a href="https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-green" alt="License"></a>
   <a href="https://python.org"><img src="https://img.shields.io/badge/python-3.10%2B-yellow" alt="Python"></a>
-  <a href="https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival/blob/contextRRF/development/pyproject.toml"><img src="https://img.shields.io/badge/runtime_deps-zero-brightgreen" alt="Dependencies"></a>
+  <a href="https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival/blob/main/pyproject.toml"><img src="https://img.shields.io/badge/runtime_deps-zero-brightgreen" alt="Dependencies"></a>
 </p>
 
 ---
@@ -84,6 +84,14 @@ Greedy Token Budget Gating (4,000 / 8,000 Token Budget Allocation)
     ▼
 Optimized Code Context & Explainability JSON
 ```
+
+### ContextRRF Ecosystem & Feature Capabilities
+
+<p align="center">
+  <img src="docs/assets/diagrams/contextrrf-ecosystem.png" alt="ContextRRF Ecosystem Diagram" width="100%">
+</p>
+
+ContextRRF indexes your codebase and documents into a local SQLite store, scores every chunk with a 6-signal hybrid retriever (BM25 + TF-IDF + AST Symbols + Usage Signals), compresses results with AST awareness, and returns exactly what you need within a token or result budget. Supports source code (Python, JS/TS, Go, Rust, C#, Java, Kotlin), documents (PDF, DOCX, CSV, plaintext), and database schemas (SQL DDL, JSON snapshots, SQLite introspection). It runs entirely locally — no API keys, no cloud, zero mandatory runtime dependencies beyond Python 3.10+.
 
 ---
 
