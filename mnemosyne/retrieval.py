@@ -785,7 +785,7 @@ class RetrievalEngine:
                 continue
             fid = chunk.file_id
             file_max[fid] = max(file_max[fid], rrf_score)
-            signals = sum(1 for v in source_scores.values() if v > 0)
+            signals = sum(1 for v in source_scores.values() if isinstance(v, (int, float)) and v > 0)
             file_signal_count[fid] = max(file_signal_count[fid], signals)
             chunk_file_map[chunk_id] = fid
 

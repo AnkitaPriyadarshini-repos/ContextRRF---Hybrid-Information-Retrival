@@ -50,14 +50,7 @@ Thumbs.db
 CLAUDE.md
 
 # -- Docs --
-docs/
-!docs/current_rrf_behavior.md
-!docs/benchmark_meat_detection_query.md
-!docs/assets/
-!docs/assets/mnemosyne.png
-!docs/assets/diagrams/
-!docs/assets/diagrams/*.png
-!docs/assets/diagrams/*.gif
+# docs/ directory tracked for ContextRRF Academic Documentation Suite
 
 # -- Holdback test data (never committed -- validation-only) --
 mnemosyne/tests/benchmark_questions/httpx_holdback.json

@@ -1,163 +1,124 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/castnettech/mnemosyne/main/docs/assets/mnemosyne.png" alt="Mnemosyne" width="400">
-</p>
+# ContextRRF: Hybrid Information Retrieval Using Reciprocal Rank Fusion
 
-<h1 align="center">Mnemosyne</h1>
-
-<p align="center">
-  Intelligent code retrieval engine -- index, search, and compress any codebase with zero dependencies.
-</p>
-
-<p align="center">
-  <a href="https://pypi.org/project/mnemosyne-engine/"><img src="https://img.shields.io/pypi/v/mnemosyne-engine" alt="PyPI"></a>
-  <a href="https://github.com/castnettech/mnemosyne/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-green" alt="License"></a>
-  <a href="https://python.org"><img src="https://img.shields.io/badge/python-3.11%2B-yellow" alt="Python"></a>
-  <a href="https://github.com/castnettech/mnemosyne/blob/main/pyproject.toml"><img src="https://img.shields.io/badge/runtime_deps-zero-brightgreen" alt="Dependencies"></a>
-</p>
+> **Academic Title**: *ContextRRF: Hybrid Information Retrieval Using Reciprocal Rank Fusion for Efficient Code Retrieval and LLM Context Optimization*
+>
+> **Project Repository**: [AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival](https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival)
 
 ---
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/castnettech/mnemosyne/main/docs/assets/diagrams/mnemosyne-ecosystem.gif" alt="Mnemosyne Ecosystem -- three packages, zero cloud" width="800">
-</p>
+## Abstract & Overview
 
-Mnemosyne indexes your codebase and documents into a local SQLite store, scores every chunk with a 6-signal hybrid retriever, compresses results with AST awareness, and returns exactly what you need within a token or result budget. Supports source code (Python, JS/TS, Go, Rust, C#, Java, Kotlin), documents (PDF, DOCX, CSV, plaintext), and database schemas (SQL DDL, JSON snapshots, SQLite introspection). It runs entirely locally -- no API keys, no cloud, no runtime dependencies beyond Python 3.11+.
+**ContextRRF** is a zero-dependency, open-source hybrid information retrieval engine engineered specifically for codebase search and Large Language Model (LLM) context window optimization.
 
-## Install
+Modern AI coding assistants often struggle with prompt clutter, missing AST context, or inconsistent search rankings when querying large codebases. ContextRRF solves this by combining sparse lexical retrieval (BM25 via FTS5), vector space search (sublinear TF-IDF), AST symbol resolution, and historical usage patterns into a unified ranking framework using **Reciprocal Rank Fusion (RRF)**.
 
+### Key Features
+- **Reciprocal Rank Fusion Engine**: Fuses multiple retrieval channels without score normalization distortion ($RRF(d) = \sum \frac{w_s}{k + \text{rank}_s(d)}$).
+- **Zero Heavy Dependencies**: Built using standard Python library modules and SQLite (`sqlite3`, `ast`, `http.server`).
+- **AST-Aware Code Chunking**: Intelligently chunks Python code by class definitions, function signatures, imports, and top-level blocks.
+- **Value Density Cost Model**: Re-ranks candidate chunks by relevance per token ($D(d) = \frac{RRF(d)}{\text{Tokens}(d)}$) to maximize prompt efficiency within strict token budgets.
+- **Explainability Engine**: Provides step-by-step mathematical derivations and JSON breakdowns for every retrieved result.
+- **Web Research Dashboard**: Premium single-page web UI featuring live multi-channel comparisons, interactive RRF formula playgrounds, architecture diagrams, and benchmark suites.
+
+---
+
+## Reciprocal Rank Fusion (RRF) Mathematical Formula
+
+ContextRRF calculates the fused score $RRF(d)$ for document chunk $d$ across retrieval channels $S$:
+
+$$RRF(d) = \sum_{s \in S} \frac{w_s}{k + \text{rank}_s(d)}$$
+
+Where:
+- $S = \{\text{BM25}, \text{TF-IDF}, \text{Usage}, \text{Symbol}\}$
+- Default Weights: $w_{\text{BM25}} = 0.40, w_{\text{TF-IDF}} = 0.40, w_{\text{Usage}} = 0.20, w_{\text{Symbol}} = 0.60$
+- Rank Smoothing Constant: $k = 60$
+
+---
+
+## Quickstart & Local Execution
+
+### Prerequisites
+- Python 3.10+
+- Modern Web Browser (Chrome, Edge, Firefox, Safari)
+
+### 1. Clone & Setup
 ```bash
-pip install mnemosyne-engine
+git clone https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival.git
+cd ContextRRF---Hybrid-Information-Retrival
 ```
 
-## Quick Start
-
+### 2. Start ContextRRF Server & Web Dashboard
 ```bash
-mnemosyne init                                    # create .mnemosyne/ workspace
-mnemosyne ingest                                  # index your codebase
-mnemosyne query "How does authentication work?"   # search
+python -m mnemosyne.server 8080
+```
+Open your browser and navigate to:
+```
+http://localhost:8080
 ```
 
-## Performance
+---
 
-| Metric | Result |
-|---|---|
-| Query latency | **<20ms** warm, <500ms cold |
-| Token reduction | **73%** on 829-file production repo |
-| File retrieval accuracy | **100%** across all test sets |
-| Ingestion speed | **167 files/sec** (~0.5s for 87 files) |
-| Compression | **40-70%** per chunk, AST-aware |
-| Memory footprint | **10-30 MB** total |
-| Storage overhead | **~4.2 bytes** per indexed token |
+## REST API Reference
 
-## Features
+### 1. `GET /api/stats`
+Returns system statistics including files indexed, chunk count, and database size.
 
-- **Hybrid 6-signal search** -- BM25, TF-IDF, symbol matching, usage frequency, predictive prefetch, and optional dense embeddings fused via Reciprocal Rank Fusion
-- **Cost-model ranking** -- results ranked by value-per-token, not just relevance. Like a query optimizer for code retrieval
-- **AST-aware compression** -- four-stage pipeline preserves signatures, docstrings, and control flow while collapsing boilerplate (20-60% reduction)
-- **Self-tuning ARC cache** -- adapts between recency and frequency patterns automatically, persisted across sessions
-- **Delta-aware tracking** -- detects file and chunk-level changes, delivers diffs instead of full content (80-95% savings on incremental queries)
-- **Content deduplication** -- SHA-256 addressed storage eliminates duplicate chunks across files
-- **7-language structural chunking** -- Python (AST), JavaScript/TypeScript, Go, C#, Rust, Java, Kotlin
-- **Document ingestion** -- PDF, DOCX, CSV, and plaintext extraction into an isolated document partition with independent BM25 + TF-IDF retrieval. Optional `mnemosyne-engine[pdf]` extra for PDF support
-- **Schema ingestion** -- DDL files, JSON/YAML snapshots, and live SQLite introspection indexed alongside code for cross-domain queries
-- **Daemon mode** -- JSON-RPC over Unix socket keeps indexes warm for sub-20ms queries
-- **Full audit trail** -- append-only JSON-lines log of every operation
-- **Zero runtime dependencies** -- pure Python 3.11+ stdlib. One `pip install`, no conflicts
-
-## Use Cases
-
-**Code search and navigation** -- Natural language queries return ranked, deduplicated results with function-level precision. Symbol-aware search finds implementations directly, not just string matches.
-
-**LLM context optimization** -- Feed Claude, GPT, Cursor, or any LLM agent the right tokens from a 100K+ codebase. Drop-in integration via instruction files cuts API spend 70%+ on context-heavy workflows.
-
-**Developer onboarding** -- New team members query "how does X work?" and get ranked results spanning models, middleware, and routes -- complete function signatures with context, not random line hits.
-
-**PR review and CI/CD** -- Delta tracking identifies which functions changed and pulls their callers and tests into a review bundle. Pipe query output into automated review pipelines.
-
-**Legacy codebase archaeology** -- Before a rewrite or migration, index a large monolith to answer "what calls this table?" or "which modules depend on this API?" Hybrid search beats grep for cross-cutting queries.
-
-**Security audit surface mapping** -- Query for patterns like `exec(`, `eval(`, `subprocess.call` with usage-frequency ranking to prioritize the most-called dangerous patterns. Audit log provides evidence trail for compliance.
-
-**Incident response** -- On-call engineer searches "payment timeout retry" at 3am. Gets ranked, compressed results across the codebase instead of grepping blindly.
-
-**Migration impact analysis** -- Planning a framework upgrade or library swap? Query every usage of the old API, ranked by call frequency, to estimate effort and prioritize high-traffic paths.
-
-## MCP Server (Claude Code Integration)
-
-For native Claude Code integration, install the MCP server addon:
-
-```bash
-pip install mnemosyne-mcp
-claude mcp add mnemosyne -- mnemosyne-mcp
+### 2. `POST /api/index`
+Triggers codebase indexing on a target directory.
+```json
+{
+  "path": "demo_project"
+}
 ```
 
-Claude Code will automatically call `mnemosyne.search` for code understanding, `mnemosyne.index` to build the index, and `mnemosyne.stats` for index info -- no manual CLI steps required. Everything runs locally over stdio. No API calls, no data egress.
-
-See the full [MCP Server Reference](https://github.com/castnettech/mnemosyne/blob/main/MCP.md) for configuration, tools, and integration details.
-
-## Ollama Integration (Local LLMs)
-
-For local LLM code search via [Ollama](https://ollama.com), install the Ollama bridge:
-
-```bash
-pip install mnemosyne-ollama
-cd /your/project
-mnemosyne-ollama "how does authentication work"
+### 3. `POST /api/query`
+Executes hybrid retrieval with RRF fusion, token budget selection, and step-by-step formula derivation.
+```json
+{
+  "query": "credit card payment refund",
+  "token_budget": 4000,
+  "weights": { "bm25": 0.4, "tfidf": 0.4, "usage": 0.2 },
+  "k": 60
+}
 ```
 
-Auto-detects your Ollama model (Qwen, Llama, Phi, etc.), indexes if needed, searches with hybrid retrieval, and returns answers with file citations. Zero config, zero cloud.
+### 4. `POST /api/rrf/calculate`
+Interactive endpoint for calculating rank fusion over custom document ranks.
 
-See the [Ollama bridge README](https://github.com/castnettech/mnemosyne/blob/main/ollama/README.md) for details.
+### 5. `POST /api/benchmark`
+Runs live controlled experiments (Exp A–D) and returns latency (ms) and Mean Reciprocal Rank (MRR) metrics.
 
-## LLM Agent Integration (CLI)
+---
 
-For agents that run shell commands (Cursor, Aider, Copilot, etc.), add to your `CLAUDE.md`, `.cursorrules`, or equivalent instruction file:
+## Project Structure
 
 ```
-Before answering questions about this codebase, run:
-  ! mnemosyne query "<question>" --budget 8000
-Use the returned chunks as primary context. Only read additional files if needed.
+ContextRRF/
+├── demo_project/          # Sample Python codebase (payment, auth, db, cache)
+├── docs/                  # Academic Documentation Suite
+│   ├── architecture.md    # Pipeline architecture & Mermaid diagrams
+│   ├── algorithms.md      # Formulas (RRF, BM25, TF-IDF, Density)
+│   ├── rrf_explained.md   # Deep dive & worked numerical example
+│   ├── bm25_explained.md  # SQLite FTS5 lexical retrieval
+│   ├── tfidf_explained.md # Sublinear TF-IDF vector space model
+│   ├── experiments.md    # Controlled experiments A-D results
+│   └── seminar_notes.md  # Presentation overview & 20 Viva Voce Q&A
+├── mnemosyne/             # Core Python Engine
+│   ├── server.py          # HTTP API & Static Web Server
+│   ├── ranking.py         # RRF Fusion & Explanation Engine
+│   ├── retrieval.py       # Multi-Channel Retrieval Engine
+│   ├── ingest.py          # AST Chunker & Hash Deduplication
+│   └── store.py           # SQLite Persistence Layer
+└── web/                   # Web Research Dashboard (HTML5/CSS3/JS)
+    ├── index.html         # Dashboard HTML structure
+    ├── style.css          # Glassmorphism dark mode styling
+    └── app.js             # Interactive UI logic & state management
 ```
 
-Works with any agent that can execute shell commands.
+---
 
-## CLI
+## Baseline & License Attribution
 
-| Command | Purpose |
-|---|---|
-| `init` | Create workspace and config |
-| `ingest` | Index files (incremental, `--full` to rebuild) |
-| `query` | Search with token budget (`--docs`, `--all` for document partition) |
-| `stats` | Index and cache statistics |
-| `schema-ingest` | Import database schema (DDL, JSON, SQLite) |
-| `schema-stats` | Schema index statistics |
-| `compress` | Preview compression for a file |
-| `delta` | Show changes since last index |
-| `cache` | Manage ARC cache (`show`, `clear`, `warm`) |
-| `daemon` | Persistent server for warm-start queries |
-| `analytics` | Precision metrics and usage patterns |
-| `audit` | Operation log |
-| `health` | Index integrity checks |
-| `gc` | Garbage collect stale data |
-| `benchmark` | Run precision benchmarks |
+This project is derived from and builds upon the open-source baseline repository **Mnemosyne** (originally copyright Cast Rock Innovation L.L.C. under the AGPL-3.0-or-later license).
 
-## Documentation
-
-| Document | Contents |
-|---|---|
-| [MCP.md](https://github.com/castnettech/mnemosyne/blob/main/MCP.md) | MCP server reference -- installation, tools, configuration, architecture |
-| [ollama/README.md](https://github.com/castnettech/mnemosyne/blob/main/ollama/README.md) | Ollama bridge -- local LLM code search via tool-calling models |
-| [REFERENCE.md](https://github.com/castnettech/mnemosyne/blob/main/REFERENCE.md) | Full CLI reference, configuration, architecture, integration guides |
-| [ALGORITHMS.md](https://github.com/castnettech/mnemosyne/blob/main/ALGORITHMS.md) | Algorithm details with academic paper references |
-| [TUNING.md](https://github.com/castnettech/mnemosyne/blob/main/TUNING.md) | Precision tuning guide |
-| [CHANGELOG.md](https://github.com/castnettech/mnemosyne/blob/main/CHANGELOG.md) | Version history |
-
-## Trademarks
-
-All third-party product names (Claude Code, Ollama, Qwen, Llama, Gemma, Phi, Mistral, Command-R, Cursor, Aider, Copilot) are trademarks of their respective owners. Mnemosyne is an independent project and is not endorsed by or affiliated with any of these companies. Product names are used solely to describe compatibility.
-
-## License
-
-Dual-licensed: [AGPL-3.0](https://github.com/castnettech/mnemosyne/blob/main/LICENSE) for open-source use | [Commercial license](https://github.com/castnettech/mnemosyne/blob/main/COMMERCIAL-LICENSE.md) for proprietary embedding.
-
-Copyright 2026 Cast Rock Innovation L.L.C. (DBA: [Cast Net Technology](https://castnettechnology.com))
+All baseline modifications, RRF explainability engines, HTTP API servers, research web dashboards, academic documentation suites, and benchmark frameworks are developed under **ContextRRF**.
