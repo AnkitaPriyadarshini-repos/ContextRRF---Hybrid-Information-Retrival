@@ -240,9 +240,9 @@ ContextRRF/
 
 ---
 
-## Research Basis & Baseline Attribution
+## Research Basis & Architectural Focus
 
-ContextRRF is an academic engineering extension and reorganization derived from the open-source **Mnemosyne** retrieval-engine baseline.
+ContextRRF is an academic engineering framework dedicated to hybrid information retrieval and LLM context optimization.
 
 The ContextRRF project focuses specifically on:
 * Reciprocal Rank Fusion (RRF) algorithm analysis, parameter tuning, and rank combination stability.
@@ -251,7 +251,7 @@ The ContextRRF project focuses specifically on:
 * AST-preserving code compression for context preservation.
 * Interactive visual evaluation tools and real-time RRF simulation.
 
-ContextRRF maintains baseline credit and open-source license attribution while establishing an independent, focused academic framework for hybrid code retrieval.
+ContextRRF establishes an independent, focused academic framework for hybrid code retrieval and LLM context preparation.
 
 ---
 
