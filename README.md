@@ -3,7 +3,9 @@
 ## Hybrid Information Retrieval Using Reciprocal Rank Fusion
 ### For Efficient Code Retrieval and LLM Context Optimization
 
-![ContextRRF Hero](docs/assets/contextrrf-hero.png)
+<p align="center">
+  <img src="docs/assets/contextrrf-hero.png" alt="ContextRRF Hero" width="100%">
+</p>
 
 ContextRRF is a zero-dependency, high-performance hybrid information retrieval engine engineered for codebases, technical documentation, and database schemas. By fusing lexical FTS5 BM25 search with sublinear TF-IDF vector space modeling through Reciprocal Rank Fusion (RRF), ContextRRF delivers explainable, high-relevance code chunks optimized for LLM prompt context budgets.
 
@@ -17,7 +19,9 @@ ContextRRF is a zero-dependency, high-performance hybrid information retrieval e
 
 ## ContextRRF Ecosystem
 
-![ContextRRF Ecosystem](docs/assets/contextrrf-ecosystem.png)
+<p align="center">
+  <img src="docs/assets/contextrrf-ecosystem.png" alt="ContextRRF Ecosystem" width="100%">
+</p>
 
 ContextRRF provides a local-first, zero-cloud code intelligence ecosystem comprising three decoupled packages:
 
@@ -134,7 +138,9 @@ Where:
 
 ## System Architecture
 
-![ContextRRF Architecture](docs/assets/contextrrf-architecture.png)
+<p align="center">
+  <img src="docs/assets/contextrrf-architecture.png" alt="ContextRRF Architecture" width="100%">
+</p>
 
 ContextRRF processes code bases through a clean, multi-stage pipeline:
 
