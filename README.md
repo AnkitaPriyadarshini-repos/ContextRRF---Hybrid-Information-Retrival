@@ -1,210 +1,304 @@
-<p align="center">
-  <img src="docs/assets/contextrrf-hero.jpg" alt="ContextRRF Hero Diagram" width="100%">
-</p>
+# ContextRRF
 
-<h1 align="center">ContextRRF</h1>
+## Hybrid Information Retrieval Using Reciprocal Rank Fusion
+### For Efficient Code Retrieval and LLM Context Optimization
 
-<p align="center">
-  <b>ContextRRF: Hybrid Information Retrieval Using Reciprocal Rank Fusion for Efficient Code Retrieval and LLM Context Optimization</b>
-</p>
+![ContextRRF Hero](docs/assets/contextrrf-hero.png)
 
-<p align="center">
-  <a href="https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival"><img src="https://img.shields.io/badge/pypi-v1.1.0-blue" alt="PyPI"></a>
-  <a href="https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-green" alt="License"></a>
-  <a href="https://python.org"><img src="https://img.shields.io/badge/python-3.10%2B-yellow" alt="Python"></a>
-  <a href="https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival/blob/main/pyproject.toml"><img src="https://img.shields.io/badge/runtime_deps-zero-brightgreen" alt="Dependencies"></a>
-</p>
+ContextRRF is a zero-dependency, high-performance hybrid information retrieval engine engineered for codebases and technical documentation. By fusing lexical FTS5 BM25 search with sublinear TF-IDF vector space modeling through Reciprocal Rank Fusion (RRF), ContextRRF delivers explainable, high-relevance code chunks optimized for LLM prompt context budgets.
+
+![Python](https://img.shields.io/badge/Python-3.11%2B-blue.svg)
+![License](https://img.shields.io/badge/License-AGPL--3.0-green.svg)
+![Retrieval](https://img.shields.io/badge/Retrieval-Hybrid%20RRF-orange.svg)
+![Dependencies](https://img.shields.io/badge/Dependencies-Zero-success.svg)
+![Test Suite](https://img.shields.io/badge/Tests-435%20Passed-brightgreen.svg)
 
 ---
 
-## 1. Academic Abstract & Research Overview
+## Why ContextRRF?
 
-> **Academic Title**: *ContextRRF: Hybrid Information Retrieval Using Reciprocal Rank Fusion for Efficient Code Retrieval and LLM Context Optimization*  
-> **Repository**: [AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival](https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival)
+Modern software projects span thousands of files, complex module hierarchies, and millions of tokens. When supplying code context to Large Language Models (LLMs), traditional single-signal retrieval mechanisms suffer from critical failure modes:
 
-Large Language Models (LLMs) deployed as automated software engineering assistants require precise, high-density context extraction from large codebases. However, standard context construction suffers from two key challenges:
-1. **Context Window Noise & Prompt Clutter**: Including raw, unranked source files or verbose boilerplate consumes finite token budgets and introduces irrelevant prompt distraction.
-2. **Single-Model Search Failure**: Sparse lexical retrieval (BM25) fails when queries use synonyms or conceptual terms; vector space models (TF-IDF or embeddings) miss exact AST symbol names and function identifiers.
+* **Keyword Search (BM25):** Misses conceptual or semantic matches when exact identifiers differ.
+* **Vector Search (TF-IDF/Dense):** Frequently retrieves irrelevant boilerplate code that shares abstract vocabulary but lacks specific symbol names.
+* **Context Overfill:** Unfiltered search returns redundant, low-density code that inflates LLM API costs and degrades reasoning quality (*lost-in-the-middle* phenomenon).
 
-**ContextRRF** presents a local-first, zero-dependency hybrid retrieval engine centered on **Reciprocal Rank Fusion (RRF)**. It combines sparse lexical search (BM25 via SQLite FTS5), vector space representation (sublinear TF-IDF), AST symbol resolution, and usage frequency signals into a scale-invariant rank fusion pipeline. ContextRRF optimizes context delivery through a Value Density Cost Model ($D(d) = \frac{RRF(d)}{\text{Tokens}(d)}$), yielding high relevance per token under strict token budgets (e.g., 4,000 / 8,000 tokens).
+**ContextRRF** solves these challenges by evaluating multiple independent retrieval channels, fusing ordinal candidate rankings using **Reciprocal Rank Fusion (RRF)**, and pruning retrieved context according to strict value-density token budget constraints.
 
 ---
 
-## 2. Core Algorithm: Reciprocal Rank Fusion (RRF)
+## Core Idea
 
-Reciprocal Rank Fusion fuses $m$ constituent retrieval channels into a composite score for candidate document chunk $d$:
+```
+Codebase & Documents
+        ↓
+Structural & AST Chunking
+        ↓
+BM25 Lexical + TF-IDF Vector Channels
+        ↓
+Reciprocal Rank Fusion (RRF)
+        ↓
+Value Density Ranking (Relevance / Token Cost)
+        ↓
+Token Budget Selection (budget_cut)
+        ↓
+AST-Preserving Context Compression
+        ↓
+LLM-Ready Context
+```
+
+The core academic focus of ContextRRF is **Reciprocal Rank Fusion (RRF)**. RRF merges document ranks across disparate retrieval channels without requiring arbitrary score normalization or channel calibration:
 
 $$RRF(d) = \sum_{s \in S} \frac{w_s}{k + \text{rank}_s(d)}$$
 
-### Parameters & Default Allocations
-- Active Sources $S = \{\text{BM25}, \text{TF-IDF}, \text{Usage}, \text{Symbol}\}$
-- Default Channel Weights: $w_{\text{BM25}} = 0.40, w_{\text{TF-IDF}} = 0.40, w_{\text{Usage}} = 0.20, w_{\text{Symbol}} = 0.60$
-- Rank Smoothing Constant: $k = 60$
-
-### Why RRF over Score Summation?
-1. **Scale Invariance**: Operates strictly on ordinal rank positions ($\text{rank}_s(d) \in \mathbb{N}^+$), bypassing raw score normalization across incompatible distributions (e.g., negative FTS5 BM25 vs $[0, 1]$ cosine similarity).
-2. **Outlier Resilience**: Single anomalous channel scores cannot skew the overall composite ranking.
-3. **Mathematical Derivation Output**: ContextRRF outputs human-auditable formulas for every retrieved snippet:
-
-```json
-{
-  "chunk_id": 350,
-  "file_path": "demo_project/payment.py",
-  "symbol_name": "CreditCardPayment.process_payment",
-  "final_rank": 1,
-  "rrf_score": 0.038415,
-  "explanation_formula": "RRF(350) = 0.40/(60+1) + 0.40/(60+4) + 0.20/(60+1) + 0.60/(60+3) = 0.025610"
-}
-```
+Where:
+* $d$: Candidate code chunk or document section.
+* $s \in S$: Active retrieval channel ($S = \{\text{BM25}, \text{TF-IDF}, \text{Symbol}, \text{Usage}\}$).
+* $\text{rank}_s(d)$: 1-indexed ordinal rank of document $d$ within channel $s$.
+* $w_s$: Weight assigned to retrieval channel $s$ (default $w_{\text{BM25}} = 0.40$, $w_{\text{TF-IDF}} = 0.40$).
+* $k$: Smoothing constant preventing top-ranked candidates from dominating (default $k = 60$).
 
 ---
 
-## 3. System Architecture & Pipeline
+## Features
 
-```
-User Query
-    │
-    ├──► 1. BM25 Lexical Channel (SQLite FTS5 Porter Stemmer)
-    ├──► 2. Sublinear TF-IDF Vector Channel (Sparse Cosine Similarity)
-    ├──► 3. AST Symbol Resolution Channel (Python AST Qualified Names)
-    └──► 4. Usage Frequency Channel (Decayed Recency Signals)
-    │
-    ▼
-Reciprocal Rank Fusion Engine: RRF(d) = Σ [ w_s / (k + rank_s(d)) ]
-    │
-    ▼
-Post-Fusion Boosters (Filename Match & AST Import Dependency Graph)
-    │
-    ▼
-Value Density Cost Model: D(d) = RRF(d) / Tokens(d) * (1 - BoilerplateRatio(d))
-    │
-    ▼
-Greedy Token Budget Gating (4,000 / 8,000 Token Budget Allocation)
-    │
-    ▼
-Optimized Code Context & Explainability JSON
-```
-
-### ContextRRF Ecosystem & Feature Capabilities
-
-<p align="center">
-  <img src="docs/assets/diagrams/contextrrf-ecosystem.png" alt="ContextRRF Ecosystem Diagram" width="100%">
-</p>
-
-ContextRRF indexes your codebase and documents into a local SQLite store, scores every chunk with a 6-signal hybrid retriever (BM25 + TF-IDF + AST Symbols + Usage Signals), compresses results with AST awareness, and returns exactly what you need within a token or result budget. Supports source code (Python, JS/TS, Go, Rust, C#, Java, Kotlin), documents (PDF, DOCX, CSV, plaintext), and database schemas (SQL DDL, JSON snapshots, SQLite introspection). It runs entirely locally — no API keys, no cloud, zero mandatory runtime dependencies beyond Python 3.10+.
+* **Hybrid Lexical & Vector Retrieval:** Combines SQLite FTS5 BM25 full-text matching with pure-Python sublinear TF-IDF sparse vector search.
+* **Reciprocal Rank Fusion:** Scale-invariant rank aggregation mechanism ensuring robust consensus ranking across retrieval channels.
+* **Explainable Channel Contributions:** Detailed score decomposition revealing exact BM25, TF-IDF, and symbol rank contributions for every retrieved result.
+* **Code-Aware Structural Chunking:** Language-specific AST and regex chunkers for Python, JavaScript/TypeScript, Go, Rust, Java, C#, and SQL/DDL.
+* **Document Ingestion:** Built-in splitters for Markdown, PDF, CSV, and DOCX files.
+* **Token-Aware Context Selection (`budget_cut`):** Greedy value-density selection algorithm prioritizing high-relevance, low-token chunks within user-configured token budgets (e.g. 4,000 or 8,000 tokens).
+* **AST-Preserving Context Compression:** Signature-retaining line compressor that strips boilerplate, docstrings, and non-essential implementations while preserving interface structures.
+* **Zero Runtime Dependencies:** Written entirely in standard Python 3.11+ using built-in `sqlite3` FTS5 tables and math libraries.
+* **Incremental Delta Indexing:** BLAKE3/SHA-256 hash tracking for instant index updates upon file modification.
+* **Interactive Web Dashboard:** Modern dark-mode web application featuring search exploration, live RRF weight tuning, architecture visualization, and evaluation benchmarks.
 
 ---
 
-## 4. Experimental Evaluation & Benchmark Results
+## System Architecture
 
-ContextRRF includes a controlled experiment benchmark suite (`POST /api/benchmark`) evaluating retrieval quality over multi-module software codebases.
+![ContextRRF Architecture](docs/assets/contextrrf-architecture.png)
 
-### Controlled Experiments A–D (Measured ContextRRF Benchmarks)
+ContextRRF processes code bases through a clean, multi-stage pipeline:
 
-| Experiment ID | Retrieval Architecture | Mean Reciprocal Rank (MRR@10) | Average Query Latency | Token Density Efficiency |
-| :---: | :--- | :---: | :---: | :---: |
-| **Exp A** | BM25 Lexical Only | 0.88 | 0.13 ms | 74.2% |
-| **Exp B** | Sublinear TF-IDF Vector Only | 0.79 | 0.21 ms | 68.5% |
-| **Exp C** | **ContextRRF Hybrid (BM25 + TF-IDF + Usage)** | **0.96** | 0.55 ms | **92.4%** |
-| **Exp D** | **ContextRRF Hybrid + AST Symbol Boosters** | **0.98** | 1.05 ms | **95.1%** |
-
-### System & Engineering Specifications
-
-| Metric | Measured / Reported Value | Source |
-|---|---|---|
-| RRF Query Latency | **0.55 ms** (average trial time) | Measured (ContextRRF live benchmark) |
-| Search MRR@10 | **0.98 MRR** | Measured (ContextRRF live benchmark) |
-| Unit Test Pass Rate | **100%** (435 passing tests) | Measured (`pytest contextrrf/tests`) |
-| Token Noise Reduction | **73%** | *Baseline/project-reported result* |
-| Ingestion Throughput | **160+ files/sec** | *Baseline/project-reported result* |
-| AST Chunk Compression | **40–70%** | *Baseline/project-reported result* |
-| Index Memory Footprint | **10–30 MB** | *Baseline/project-reported result* |
-| Storage Overhead | **~4.2 bytes/token** | *Baseline/project-reported result* |
+1. **Ingestion & Hash Delta Tracking:** Scans files while honoring `.gitignore` rules and computing file content hashes.
+2. **Structural AST Chunking:** Segments code into logical boundaries (functions, classes, interfaces, doc sections) rather than fixed token windows.
+3. **FTS5 & Inverted Index Persistence:** Stores chunk text in SQLite with FTS5 BM25 indexing and builds an in-memory TF-IDF inverted index.
+4. **Dual Channel Retrieval:** Runs parallel candidate queries over FTS5 BM25 and sublinear TF-IDF vector channels.
+5. **Reciprocal Rank Fusion:** Fuses candidate lists using weighted RRF with smoothing constant $k=60$.
+6. **Post-Fusion Boosting:** Applies symbol match multipliers (`2.0x`) and boilerplate penalties (`1.0 - 0.5 * ratio`).
+7. **Value Density Allocation:** Ranks chunks by $\text{Relevance} / \ln(1 + \text{Tokens})$ and fills the prompt window up to the specified token ceiling.
 
 ---
 
-## 5. Web Research Dashboard & Interactive Demo
+## Algorithms Summary
 
-ContextRRF provides a local-first single-page Web Research Dashboard. It requires zero signup, zero cloud login, and zero API keys.
+### BM25 Lexical Search
+Evaluated via SQLite FTS5 with Porter stemming and sub-tokenization. Preprocesses queries by removing stop words and forming OR-conjunctions to maximize term recall over identifier variations.
+
+### Sublinear TF-IDF Vector Space
+Computes term frequency as $\text{TF}(t, d) = 1 + \ln(\text{count}(t, d))$ for $\text{count} > 0$, combined with smoothed inverse document frequency $\text{IDF}(t) = \ln((1 + N)/(1 + \text{df}(t))) + 1.0$. camelCase and snake_case identifiers are split automatically during indexing.
+
+### Reciprocal Rank Fusion (RRF)
+Aggregates ordinal candidate ranks from BM25 and TF-IDF without needing raw score scaling. Missing items in a channel receive a default penalty rank ($|L_s| + 1$).
+
+### Value Density Budgeting
+Calculates density score $D(d) = \frac{\text{RRF}(d)}{1 + \ln(1 + \text{Tokens}(d))} \times (1 - \text{BoilerplateRatio}(d))$. Chunks are selected greedily until reaching the target token ceiling.
+
+### Signature-Preserving Compression
+Strips internal function bodies, docstrings, and redundant comments while retaining class definitions, method signatures, and return annotations.
+
+Detailed mathematical derivations and source code mappings are available in [`ALGORITHMS.md`](ALGORITHMS.md).
+
+---
+
+## RRF Ranking Example
+
+Consider a query targeting authentication middleware:
+
+```
+Query: "authentication middleware"
+Token Budget: 1,000 tokens
+```
+
+### Channel Ranks
+
+| Rank | BM25 Channel | TF-IDF Channel |
+|:---:|:---|:---|
+| **#1** | `auth.py` (`authenticate_request`) | `middleware.py` (`AuthMiddleware`) |
+| **#2** | `middleware.py` (`AuthMiddleware`) | `auth.py` (`authenticate_request`) |
+| **#3** | `routes.py` (`register_routes`) | `login.py` (`login_handler`) |
+
+### RRF Calculation ($k = 60, w_{\text{BM25}} = 0.40, w_{\text{TF-IDF}} = 0.40$)
+
+* **`middleware.py`**:
+  $$RRF = \frac{0.40}{60 + 2} + \frac{0.40}{60 + 1} = 0.006451 + 0.006557 = \mathbf{0.013008}$$
+
+* **`auth.py`**:
+  $$RRF = \frac{0.40}{60 + 1} + \frac{0.40}{60 + 2} = 0.006557 + 0.006451 = \mathbf{0.013008}$$
+
+* **`routes.py`**:
+  $$RRF = \frac{0.40}{60 + 3} + \frac{0.40}{60 + 4} = 0.006349 + 0.006250 = \mathbf{0.012599}$$
+
+**Result:** `middleware.py` and `auth.py` achieve high consensus across both channels, rising above single-channel outliers and securing top placement in the final context payload.
+
+---
+
+## Quick Start
+
+### 1. Clone Repository & Setup Environment
 
 ```bash
-# Clone repository
 git clone https://github.com/AnkitaPriyadarshini-repos/ContextRRF---Hybrid-Information-Retrival.git
 cd ContextRRF---Hybrid-Information-Retrival
 
-# Install local package
+# Create and activate virtual environment
+python -m venv .venv
+# On Windows:
+.venv\Scripts\activate
+# On Linux / macOS:
+source .venv/bin/activate
+
+# Install ContextRRF engine in editable mode
 pip install -e .
-
-# Launch ContextRRF Server & Web Dashboard
-python -m contextrrf.server 8080
 ```
 
-Open your web browser to:
-```
-http://localhost:8080
-```
-
-### Dashboard Panels
-1. **Overview & Stats**: Live SQLite index stats, corpus token count, and quick query sandbox.
-2. **Search Explorer**: Side-by-side comparison of constituent channels (BM25 vs. TF-IDF vs. RRF Fused).
-3. **Interactive RRF Playground**: Adjust candidate document ranks, smoothing constant $k$, and channel weights to inspect step-by-step formula derivations in real-time.
-4. **System Architecture**: Interactive diagram explaining AST ingestion, multi-channel retrieval, and value density scoring.
-5. **Algorithms Reference**: Full LaTeX formulas and mathematical specifications.
-6. **Benchmark & Experiments**: Live execution of Controlled Experiments A–D with real-time latency and MRR plots.
-
----
-
-## 6. REST API Reference
-
-| Endpoint | Method | Payload / Arguments | Purpose |
-|---|---|---|---|
-| `/api/stats` | `GET` | None | Returns index file count, chunk count, tokens, DB size |
-| `/api/config` | `GET` | None | Returns active RRF weights and smoothing constant $k$ |
-| `/api/index` | `POST` | `{"path": "demo_project"}` | Triggers AST ingestion & FTS5 indexing |
-| `/api/query` | `POST` | `{"query": "...", "token_budget": 4000}` | Hybrid retrieval, RRF fusion, and budget gating |
-| `/api/rrf/calculate` | `POST` | `{"channels": {...}, "k": 60}` | Live rank fusion playground calculations |
-| `/api/benchmark` | `POST` | `{"query": "...", "trials": 3}` | Executes live benchmark experiments A–D |
-| `/api/explain` | `GET` | `?id={query_id}` | Detailed derivation breakdown for query session |
-
----
-
-## 7. CLI Reference
+### 2. Initialize & Ingest Codebase
 
 ```bash
-contextrrf init                                    # create .contextrrf/ workspace
-contextrrf ingest                                  # AST-aware codebase indexing
-contextrrf query "How does payment refund work?"   # search with budget gating
-contextrrf stats                                   # index and ARC cache statistics
+# Initialize local SQLite index database
+python -m contextrrf.cli init
+
+# Ingest sample project or target directory
+python -m contextrrf.cli ingest demo_project
 ```
 
-| Command | Description |
-|---|---|
-| `init` | Initialize local workspace and configuration (`.contextrrf/`) |
-| `ingest` | Incremental AST file scanning and indexing (`--full` to force rebuild) |
-| `query` | Execute hybrid search with token budget allocation (`--budget 8000`) |
-| `stats` | Display corpus stats, indexed chunk breakdown, and cache hit ratios |
-| `daemon` | Background server mode for warm-start sub-millisecond queries |
-| `benchmark` | Run automated accuracy and latency benchmark suites |
+### 3. Query Code Context
+
+```bash
+# Execute hybrid RRF search query
+python -m contextrrf.cli query "How does authentication work?" --budget 2000
+```
+
+### 4. Inspect Index Statistics
+
+```bash
+# Display indexed files, chunks, and token counts
+python -m contextrrf.cli stats
+```
 
 ---
 
-## 8. Documentation Suite
+## Interactive Dashboard
 
-- [`docs/architecture.md`](docs/architecture.md) — System pipeline, AST chunking, signal extraction, and Mermaid flowcharts.
-- [`docs/algorithms.md`](docs/algorithms.md) — Mathematical formulas (RRF, Okapi BM25, sublinear TF-IDF, value density).
-- [`docs/rrf_explained.md`](docs/rrf_explained.md) — RRF deep dive, scale invariance, $k=60$ smoothing, and worked numerical example.
-- [`docs/bm25_explained.md`](docs/bm25_explained.md) — SQLite FTS5 lexical retrieval, Porter stemmer, and score normalization.
-- [`docs/tfidf_explained.md`](docs/tfidf_explained.md) — Sublinear TF-IDF vector space model and in-memory sparse inverted index.
-- [`docs/experiments.md`](docs/experiments.md) — Empirical benchmarks and Controlled Experiments A–D results.
-- [`docs/seminar_notes.md`](docs/seminar_notes.md) — Presentation overview, RAG context connection, and **20 Viva Voce Q&A**.
+Launch the embedded web interface to explore retrieval results, analyze rank contributions, and test RRF parameter variations interactively:
+
+```bash
+python -m contextrrf.cli serve --port 8000
+```
+
+Open your browser to `http://localhost:8000` to access:
+
+* **Search Explorer:** Query codebase and inspect BM25 vs TF-IDF vs RRF rankings side-by-side.
+* **RRF Playground:** Adjust smoothing constant $k$ and channel weights $w_s$ in real time.
+* **System Architecture:** Visual breakdown of ingestion, chunking, and fusion stages.
+* **Benchmark Suite:** Run latency and relevance evaluation queries.
 
 ---
 
-## 9. Baseline & Academic Legal Attribution
+## Academic Evaluation Framework
 
-ContextRRF is an academic research and software engineering project derived from an open-source baseline engine repository (originally copyright Cast Rock Innovation L.L.C. under the AGPL-3.0-or-later license).
+ContextRRF evaluates retrieval performance across six standardized dimensions:
 
-The ContextRRF implementation extends and reorganizes the architecture around Reciprocal Rank Fusion, retrieval explainability, token-budget optimization, experimental evaluation, an interactive research dashboard, and a zero-dependency HTTP server.
+| Evaluation Metric | Baseline / Target | Status |
+|:---|:---|:---|
+| **Retrieval Latency** | Sub-100ms response time for corpus < 10,000 chunks | *Baseline-reported* |
+| **Token Reduction Rate** | 40%–60% context reduction via value density budgeting | *ContextRRF experiment* |
+| **RRF Ranking Stability** | Kendall's $\tau \ge 0.85$ under channel noise perturbation | *ContextRRF experiment* |
+| **AST Chunk Integrity** | Zero broken syntax trees across multi-file extraction | *ContextRRF experiment* |
+| **Multi-Language Coverage** | Support for 7+ programming languages & 4 doc formats | *ContextRRF experiment* |
+| **Mean Reciprocal Rank (MRR)** | Benchmark query MRR evaluation | *To be evaluated* |
 
-All legal notices, AGPL-3.0 license terms, and copyright attributions are preserved in [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE).
+---
 
+## Use Cases
+
+* **Precise Code Search:** Locate exact functions, handlers, and interface definitions across large repositories.
+* **LLM Context Optimization:** Reduce prompt token usage while improving model response accuracy.
+* **Developer Onboarding:** Quickly map dependencies, database initialization, and route structures in unfamiliar codebases.
+* **Pull Request Analysis:** Extract relevant historical code chunks impacted by a proposed change.
+* **Legacy Code Exploration:** Identify core business logic buried within legacy software suites.
+* **Automated Context Preparation:** Feed high-density context chunks directly to local or remote LLM coding agents.
+
+---
+
+## Project Structure
+
+```
+ContextRRF/
+├── .github/              # CI/CD workflows (PyPI publish, test suite)
+├── contextrrf/           # Core Python engine source code
+│   ├── chunkers/         # Language AST & document chunkers
+│   ├── embeddings/       # TF-IDF vector space backend
+│   ├── tests/            # Pytest test suite (435 passing tests)
+│   ├── bloom.py          # Query term Bloom filter
+│   ├── cache.py          # Adaptive Replacement Cache (ARC)
+│   ├── cli.py            # Command line interface handler
+│   ├── compress.py       # AST-preserving context compressor
+│   ├── ingest.py         # Directory traversal & chunking engine
+│   ├── ranking.py        # RRF fusion & value-density budget selection
+│   ├── retrieval.py      # Hybrid FTS5 BM25 + TF-IDF query engine
+│   └── store.py          # SQLite FTS5 database persistence layer
+├── demo_project/         # Sample codebase for quick start and testing
+├── docs/                 # Academic documentation & technical reference
+│   ├── algorithms/       # Mathematical formulas & algorithm specs
+│   ├── architecture/     # System architecture diagrams & inventory
+│   ├── assets/           # Visual graphics & architecture diagrams
+│   ├── experiments/      # Benchmark results & experimental notes
+│   ├── guides/           # Contributing, tuning & developer playbooks
+│   ├── integrations/     # MCP Server & Ollama Bridge packages
+│   └── reference/        # Security, license, changelog & technical docs
+├── web/                  # Interactive dark-mode dashboard UI
+├── ALGORITHMS.md         # Comprehensive algorithm reference
+├── BASELINE_REPORT.md    # Baseline verification & evolution history
+├── LICENSE               # AGPL-3.0 License file
+├── README.md             # Project primary documentation
+├── pyproject.toml        # Build configuration & entry points
+└── requirements.txt      # Core runtime environment specifications
+```
+
+---
+
+## Research Basis & Baseline Attribution
+
+ContextRRF is an academic engineering extension and reorganization derived from the open-source **Mnemosyne** retrieval-engine baseline.
+
+The ContextRRF project focuses specifically on:
+* Reciprocal Rank Fusion (RRF) algorithm analysis, parameter tuning, and rank combination stability.
+* Explainable multi-channel hybrid information retrieval for code corpora.
+* Value-density token-aware context optimization under strict LLM prompt budget constraints.
+* AST-preserving code compression for context preservation.
+* Interactive visual evaluation tools and real-time RRF simulation.
+
+ContextRRF maintains baseline credit and open-source license attribution while establishing an independent, focused academic framework for hybrid code retrieval.
+
+---
+
+## Documentation Index
+
+| Document | Description | Path |
+|:---|:---|:---|
+| **Algorithm Reference** | Deep dive into RRF formulas, BM25 FTS5 parameters & TF-IDF vectors | [`ALGORITHMS.md`](ALGORITHMS.md) |
+| **Baseline Report** | Initial repository verification, system limits & baseline metrics | [`BASELINE_REPORT.md`](BASELINE_REPORT.md) |
+| **System Architecture** | Full technical architecture specifications & data flows | [`docs/architecture/architecture.md`](docs/architecture/architecture.md) |
+| **Algorithmic Specifications** | Mathematical formulas, bounds & density functions | [`docs/algorithms/algorithms.md`](docs/algorithms/algorithms.md) |
+| **Experimental Suite** | Query benchmarks, experimental results & seminar notes | [`docs/experiments/experiments.md`](docs/experiments/experiments.md) |
+| **Tuning Guide** | Parameter optimization for chunk size, RRF $k$, and weights | [`docs/guides/TUNING.md`](docs/guides/TUNING.md) |
+| **MCP Server Integration** | Model Context Protocol integration docs | [`docs/reference/MCP.md`](docs/reference/MCP.md) |
+| **Contributing Guide** | Local development environment & pull request guidelines | [`docs/guides/CONTRIBUTING.md`](docs/guides/CONTRIBUTING.md) |
+
+---
+
+## License
+
+ContextRRF is released under the [GNU Affero General Public License v3.0 (AGPL-3.0)](LICENSE).

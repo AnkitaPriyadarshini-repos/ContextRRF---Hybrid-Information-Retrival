@@ -62,19 +62,19 @@ jobs:
           ref: ${{ github.event.release.tag_name }}
           persist-credentials: false
 
-      - name: Verify tag matches ollama/pyproject.toml version
+      - name: Verify tag matches docs/integrations/ollama/pyproject.toml version
         run: |
           TAG="${GITHUB_REF_NAME#ollama-v}"
           PKG_VERSION=$(python3 -c "
           import re, pathlib
-          text = pathlib.Path('ollama/pyproject.toml').read_text()
+          text = pathlib.Path('docs/integrations/ollama/pyproject.toml').read_text()
           m = re.search(r'^version\s*=\s*\"([^\"]+)\"', text, re.M)
           print(m.group(1) if m else 'UNKNOWN')
           ")
           echo "Tag version:    $TAG"
           echo "Package version: $PKG_VERSION"
           if [ "$TAG" != "$PKG_VERSION" ]; then
-            echo "::error::Tag 'ollama-v$TAG' does not match ollama/pyproject.toml version '$PKG_VERSION'"
+            echo "::error::Tag 'ollama-v$TAG' does not match docs/integrations/ollama/pyproject.toml version '$PKG_VERSION'"
             exit 1
           fi
 
@@ -87,13 +87,13 @@ jobs:
         run: pip install --upgrade build
 
       - name: Build sdist and wheel
-        run: python -m build ollama/
+        run: python -m build docs/integrations/ollama/
 
       - name: Verify dist contents
         run: |
-          ls -la ollama/dist/
-          SDIST_COUNT=$(ls ollama/dist/*.tar.gz 2>/dev/null | wc -l)
-          WHEEL_COUNT=$(ls ollama/dist/*.whl 2>/dev/null | wc -l)
+          ls -la docs/integrations/ollama/dist/
+          SDIST_COUNT=$(ls docs/integrations/ollama/dist/*.tar.gz 2>/dev/null | wc -l)
+          WHEEL_COUNT=$(ls docs/integrations/ollama/dist/*.whl 2>/dev/null | wc -l)
           if [ "$SDIST_COUNT" -ne 1 ] || [ "$WHEEL_COUNT" -ne 1 ]; then
             echo "::error::Expected 1 sdist + 1 wheel, got $SDIST_COUNT sdist + $WHEEL_COUNT wheel"
             exit 1
@@ -103,7 +103,7 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
         with:
           name: ollama-dist
-          path: ollama/dist/
+          path: docs/integrations/ollama/dist/
           if-no-files-found: error
           retention-days: 5
 

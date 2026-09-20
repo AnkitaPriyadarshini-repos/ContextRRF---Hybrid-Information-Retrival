@@ -16,7 +16,7 @@ Establish a clean, local working baseline of the open-source ContextRRF reposito
 - **Operating System**: Windows 11 Home (x86_64)
 - **Python Version**: Python 3.13.1 (in isolated `.venv`)
 - **Virtual Environment**: `.venv` created via `py -3.13 -m venv .venv`
-- **Package Manager**: standard `pip` (`pip install -e . -r requirements-dev.txt`)
+- **Package Manager**: standard `pip` (`pip install -e . -r docs/guides/requirements-dev.txt`)
 
 ---
 
@@ -75,7 +75,7 @@ $$RRF(d) = \sum_{s \in S} \frac{w_s}{k + \text{rank}_s(d)}$$
 
 - Default smoothing constant $k = 60$.
 - Missing candidates in a channel receive penalty rank $|L_s| + 1$.
-- Detailed analysis documented in [`docs/current_rrf_behavior.md`](file:///c:/Users/ankit/ContextRRF/docs/current_rrf_behavior.md).
+- Detailed analysis documented in [`docs/experiments/current_rrf_behavior.md`](file:///c:/Users/ankit/ContextRRF/docs/experiments/current_rrf_behavior.md).
 
 ---
 
