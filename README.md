@@ -19,7 +19,22 @@ ContextRRF is a zero-dependency, high-performance hybrid information retrieval e
 
 ![ContextRRF Ecosystem](docs/assets/contextrrf-ecosystem.png)
 
-ContextRRF indexes your codebase and documents into a local SQLite store, scores every chunk with a multi-signal hybrid retriever, compresses results with AST awareness, and returns exactly what you need within a token or result budget. Supports source code (Python, JS/TS, Go, Rust, C#, Java, Kotlin), documents (PDF, DOCX, CSV, plaintext), and database schemas (SQL DDL, JSON snapshots, SQLite introspection). It runs entirely locally — no API keys, no cloud, no runtime dependencies beyond Python 3.11+.
+ContextRRF provides a local-first, zero-cloud code intelligence ecosystem comprising three decoupled packages:
+
+* **`contextrrf-engine` (Standalone CLI & Core Engine):** Indexes codebases, documents (PDF, DOCX, CSV, txt), and database schemas (DDL, JSON, SQLite) into a local SQLite store. Scores every chunk with a 6-signal hybrid retriever (BM25 + TF-IDF + symbols + usage + RRF) and compresses context with AST awareness.
+* **`contextrrf-mcp` (Claude Code Integration):** Standard Model Context Protocol (MCP) stdio server allowing Claude Code and MCP-compatible agents native access to hybrid codebase retrieval in a single tool call.
+* **`contextrrf-ollama` (Ollama Local LLM Bridge):** Orchestrates full tool-calling loops between your local LLM (Gemma 3, Qwen, Llama, Phi) and the codebase.
+
+### How the Tool-Call Loop Works
+
+`contextrrf-ollama` orchestrates the full cycle between your local LLM and the codebase:
+
+1. **USER QUERY:** User asks a question (e.g. *"How does authentication middleware work?"*).
+2. **OLLAMA LLM:** Local LLM evaluates prompt and decides to call `search()`.
+3. **MCP BRIDGE:** `contextrrf-ollama` routes the tool call through `contextrrf-mcp`.
+4. **RETRIEVAL ENGINE:** `contextrrf-engine` executes 6-signal search, RRF rank fusion, and AST-aware compression.
+5. **RESULTS:** Ranked, budget-optimized code chunks are returned to the LLM context window.
+6. **ANSWER:** The LLM responds to the user citing exact source code lines (e.g. `src/auth.py:42`).
 
 ---
 
