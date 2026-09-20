@@ -91,6 +91,27 @@ ContextRRF processes code bases through a clean, multi-stage pipeline:
 
 ---
 
+## ContextRRF Ecosystem
+
+![ContextRRF Ecosystem](docs/assets/contextrrf-ecosystem.png)
+
+ContextRRF provides a local-first, zero-cloud code intelligence ecosystem comprising three decoupled packages:
+
+* **`contextrrf-engine` (Standalone Core & CLI):** The core 6-signal hybrid retrieval engine combining BM25, TF-IDF, symbol matching, Reciprocal Rank Fusion (RRF), and SQLite persistence.
+* **`contextrrf-mcp` (Claude Code Integration):** Standard Model Context Protocol (MCP) stdio server allowing Claude Code and MCP-compliant AI agents native access to codebase search in a single tool call.
+* **`contextrrf-ollama` (Local LLM Bridge):** Orchestrates local LLM tool-calling loops (Gemma, Llama, Qwen, Phi) with local code retrieval.
+
+### How the Tool-Call Loop Works
+
+1. **User Query:** User prompts the AI agent (e.g. *"How does authentication middleware work?"*).
+2. **Local LLM Decision:** The local model evaluates the prompt and issues a `search()` tool call.
+3. **MCP Bridge:** `contextrrf-ollama` routes the tool call through the `contextrrf-mcp` bridge server.
+4. **Retrieval Engine:** `contextrrf-engine` performs multi-channel search, RRF fusion, and AST-aware compression.
+5. **Ranked Results:** Compact, value-dense code chunks are returned to the LLM context window.
+6. **Ground Answer:** The LLM responds with accurate code explanations and exact line citations (e.g. `auth.py:42`).
+
+---
+
 ## Algorithms Summary
 
 ### BM25 Lexical Search
